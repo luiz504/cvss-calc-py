@@ -1,4 +1,4 @@
-BASE_METRICS = {
+BASE_METRICS: dict[str, dict[str, dict[str, str]]] = {
     "AV": {
         "label": "ATTACK_VECTOR",
         "values": {

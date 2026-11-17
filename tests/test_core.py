@@ -18,10 +18,10 @@ def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: 
     assert base_score(metrics) == expected
 
 
-@pytest.mark.parametrize(("metrics"), [[], {}, None, 42, "string", 3.14])
+@pytest.mark.parametrize("metrics", [[], None, (), 42, "string", 3.14])
 def test_validate_rejects_non_dict_metrics(metrics: object) -> None:
-    with pytest.raises(Exception) as excinfo:
-        validate(metrics)  # not a dict
+    with pytest.raises(CvssError) as excinfo:
+        validate(metrics)  # type: ignore[arg-type]  # not a dict, on purpose
     assert str(excinfo.value) == "Metrics must be a dictionary"
 
 
@@ -29,10 +29,18 @@ def test_validate_accepts_valid_metrics() -> None:
     validate(VALID_METRICS)  # passing without raising an exception
 
 
-def test_validate_rejects_missing_metrics() -> None:
+@pytest.mark.parametrize(
+    ("metrics", "expected_message"),
+    [
+        ({k: v for k, v in VALID_METRICS.items() if k != "A"}, "Missing metric: A"),
+        ({}, "Missing metric: AV"),  # reports the first missing metric, in spec order
+    ],
+    ids=["one-missing", "all-missing"],
+)
+def test_validate_rejects_missing_metrics(metrics: dict[str, str], expected_message: str) -> None:
     with pytest.raises(CvssError) as excinfo:
-        validate({"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H"})  # missing A
-    assert str(excinfo.value) == "Missing metric: A"
+        validate(metrics)
+    assert str(excinfo.value) == expected_message
 
 
 def test_validate_rejects_unknown_metrics() -> None:
@@ -43,18 +51,19 @@ def test_validate_rejects_unknown_metrics() -> None:
     assert str(excinfo.value) == "Unknown metric: X"
 
 
-def test_validate_rejects_non_string_value() -> None:
-    # the web mode can receive a JSON array like ["N"]
+@pytest.mark.parametrize("value", [["N"], None, 1])
+def test_validate_rejects_non_string_value(value: object) -> None:
+    # the web mode can receive JSON values like ["N"], null or 1
     with pytest.raises(CvssError, match="AV must be a string"):
-        validate({**VALID_METRICS, "AV": ["N"]})
+        validate({**VALID_METRICS, "AV": value})
 
 
 @pytest.mark.parametrize(
     ("metric", "value"),
     [
         ("AV", "Z"),  # letter not allowed for this metric
-        ("S", "N"),  # valid letter, but of another metric
         ("AV", "n"),  # lowercase is rejected
+        ("AV", "NA"),  # two letters (would slip through a substring check)
         ("AC", ""),  # empty string
     ],
 )
