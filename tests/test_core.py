@@ -4,7 +4,7 @@ from cvss.core import base_score
 
 
 @pytest.mark.parametrize(
-    "metrics, expected",
+    ("metrics", "expected"),
     [
         ({"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}, 9.8),
         ({"AV": "N", "AC": "L", "PR": "N", "UI": "R", "S": "C", "C": "L", "I": "L", "A": "N"}, 6.1),
