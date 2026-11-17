@@ -20,3 +20,9 @@ def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: 
 
 def test_validate_accepts_valid_metrics() -> None:
     validate(VALID_METRICS)  # passing without raising an exception
+
+
+def test_validate_rejects_missing_metrics() -> None:
+    with pytest.raises(Exception) as excinfo:
+        validate({"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H"})  # missing A
+    assert str(excinfo.value) == "Missing metric: A"
