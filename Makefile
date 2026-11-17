@@ -1,7 +1,7 @@
 VENV := .venv
 PY   := $(VENV)/bin/python
 
-.PHONY: help install lint format clean
+.PHONY: help install test watch lint format check clean
 .DEFAULT_GOAL := help
 
 help: ## list commands
@@ -26,6 +26,11 @@ clean: ## delete venv and caches
 
 test: install ## run tests once
 	$(PY) -m pytest
-	
+
 watch: install ## re-run tests on save
 	$(VENV)/bin/ptw .
+
+check: install ## pre-commit gate: lint + format + tests
+	$(VENV)/bin/ruff check
+	$(VENV)/bin/ruff format --check
+	$(PY) -m pytest
