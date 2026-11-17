@@ -55,4 +55,5 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
 ## Docs
 
 - [docs/domain.md](docs/domain.md): CVSS definitions, metric weights, formulas, severity bands, reference vectors
+- [docs/design.md](docs/design.md): API of the core, module responsibilities, web contract, build order
 - [docs/references.md](docs/references.md): specification, calculators, Python and tooling links

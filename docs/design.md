@@ -1,0 +1,60 @@
+# Design
+
+Decisions for how the code is organised. The rules being implemented are in [domain.md](domain.md).
+
+## Decisions
+
+- Base score only (CVSS 3.1). No temporal or environmental scores.
+- Metrics are plain `dict[str, str]` (e.g. `{"AV": "N", "AC": "L", ...}`), not a class. They serialize to JSON for free.
+- `Roundup` follows the specification's integer version, not `ceil(x * 10) / 10`.
+- Every metric value has a human label (`N: Network`) so the CLI and the web UI can show friendly text.
+- The CLI and the web UI contain **no scoring rules**. Both call `core`, so they always agree.
+
+## `cvss/core.py` (pure: no I/O, no printing)
+
+```text
+METRICS                                  # per metric: allowed values, label and weight (single source of truth)
+validate(metrics) -> None                # raises CvssError
+subscores(metrics) -> (exploitability, impact)   # unrounded
+base_score(metrics) -> float             # validates, then computes (one decimal)
+severity(score) -> str                   # None | Low | Medium | High | Critical
+parse_vector(vector) -> dict[str, str]   # raises CvssError
+build_vector(metrics) -> str             # "CVSS:3.1/AV:N/..."
+```
+
+- One error type: `CvssError(ValueError)`. Messages name the metric and the allowed values, e.g. `AV must be one of N, A, L, P (got "X")`. The CLI prints the message and the web returns it in a 400, so the wording lives in one place.
+- The CLI prompts and the web form options are both generated from `METRICS`.
+
+## Modules
+
+| Module | Responsibility |
+| --- | --- |
+| `core.py` | scoring rules, validation, vector parsing |
+| `cli.py` | prompts, `--vector` flag, printing; loops on `CvssError` until the input is valid |
+| `web.py` | `http.server` handler, JSON in/out, turns `CvssError` into HTTP 400 |
+| `static/index.html` | the form; builds itself from `GET /api/metrics` |
+| `main.py` | entry point: `cli` or `web` |
+
+## Web contract (`127.0.0.1` only)
+
+```text
+GET  /              -> static/index.html
+GET  /api/metrics   -> metrics, allowed values and labels
+POST /api/score
+  request:  {"metrics": {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}}
+  200:      {"score": 9.8, "severity": "Critical", "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"}
+  400:      {"error": "AV must be one of N, A, L, P (got \"X\")"}
+```
+
+Anything else returns 404. Request bodies are capped at about 1 KB.
+
+## Build order (one commit per step)
+
+1. failing tests for the 3 reference vectors
+2. metric tables and validation
+3. `Roundup`, subscores and base score
+4. severity
+5. vector parse and build
+6. CLI, then the web server and page
+
+The test list for each step comes from the domain sections, see the mapping in the todo note.
