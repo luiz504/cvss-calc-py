@@ -1,6 +1,8 @@
 import pytest
 
-from cvss.core import base_score
+from cvss.core import base_score, validate
+
+VALID_METRICS = {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}
 
 
 @pytest.mark.parametrize(
@@ -14,3 +16,7 @@ from cvss.core import base_score
 )
 def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: float) -> None:
     assert base_score(metrics) == expected
+
+
+def test_validate_accepts_valid_metrics() -> None:
+    validate(VALID_METRICS)  # passing without raising an exception
