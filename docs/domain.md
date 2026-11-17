@@ -14,7 +14,7 @@ Eight metrics, each with a fixed set of allowed values.
 
 | Metric | Name | Values (letter: meaning, weight) |
 | --- | --- | --- |
-| `AV` | Attack Vector | `N` Network 0.85, `A` Adjacent 0.62, `L` Local 0.55, `P` Physical 0.20 |
+| `AV` | Attack Vector | `N` Network 0.85, `A` Adjacent Network 0.62, `L` Local 0.55, `P` Physical 0.20 |
 | `AC` | Attack Complexity | `L` Low 0.77, `H` High 0.44 |
 | `PR` | Privileges Required | `N` None 0.85, `L` Low 0.62 (0.68 if scope changed), `H` High 0.27 (0.50 if scope changed) |
 | `UI` | User Interaction | `N` None 0.85, `R` Required 0.62 |

@@ -7,13 +7,15 @@ Decisions for how the code is organised. The rules being implemented are in [dom
 - Base score only (CVSS 3.1). No temporal or environmental scores.
 - Metrics are plain `dict[str, str]` (e.g. `{"AV": "N", "AC": "L", ...}`), not a class. They serialize to JSON for free.
 - `Roundup` follows the specification's integer version, not `ceil(x * 10) / 10`.
-- Every metric value has a human label (`N: Network`) so the CLI and the web UI can show friendly text.
+- English only, no translations in v1. Metrics and values are stored under stable uppercase keys (e.g. `ATTACK_VECTOR`, `NETWORK`), which the CLI and the web UI show as they are.
+- Definitions and weights are separate tables: `BASE_METRICS` says which metrics and letters exist, `BASE_WEIGHTS` holds the scoring numbers.
 - The CLI and the web UI contain **no scoring rules**. Both call `core`, so they always agree.
 
 ## `cvss/core.py` (pure: no I/O, no printing)
 
 ```text
-METRICS                                  # per metric: allowed values, label and weight (single source of truth)
+BASE_METRICS                             # per metric: a label key and its allowed values {letter: key}
+BASE_WEIGHTS                             # weights for the formula, incl. the changed-scope PR weights
 validate(metrics) -> None                # raises CvssError
 subscores(metrics) -> (exploitability, impact)   # unrounded
 base_score(metrics) -> float             # validates, then computes (one decimal)
@@ -23,7 +25,7 @@ build_vector(metrics) -> str             # "CVSS:3.1/AV:N/..."
 ```
 
 - One error type: `CvssError(ValueError)`. Messages name the metric and the allowed values, e.g. `AV must be one of N, A, L, P (got "X")`. The CLI prints the message and the web returns it in a 400, so the wording lives in one place.
-- The CLI prompts and the web form options are both generated from `METRICS`.
+- The CLI prompts and the web form options are both generated from `BASE_METRICS`.
 
 ## Modules
 
