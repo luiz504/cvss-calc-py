@@ -11,6 +11,11 @@ def validate(metrics: dict[str, str]) -> None:
         if metric not in metrics:
             raise CvssError(f"Missing metric: {metric}")
 
+    # 2. every metric value must be valid
+    for metric in metrics:
+        if metric not in BASE_METRICS:
+            raise CvssError(f"Unknown metric: {metric}")
+
 
 def base_score(metrics: dict[str, str]) -> float:
     return 0.0

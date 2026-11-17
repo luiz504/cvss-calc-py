@@ -26,3 +26,11 @@ def test_validate_rejects_missing_metrics() -> None:
     with pytest.raises(Exception) as excinfo:
         validate({"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H"})  # missing A
     assert str(excinfo.value) == "Missing metric: A"
+
+
+def test_validate_rejects_unknown_metrics() -> None:
+    with pytest.raises(Exception) as excinfo:
+        validate(
+            {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H", "X": "Y"}
+        )  # unknown metric X
+    assert str(excinfo.value) == "Unknown metric: X"
