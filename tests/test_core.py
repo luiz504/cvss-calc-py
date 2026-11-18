@@ -1,6 +1,6 @@
 import pytest
 
-from cvss.core import CvssError, base_score, validate
+from cvss.core import CvssError, base_score, roundup, validate
 
 VALID_METRICS = {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}
 
@@ -16,6 +16,9 @@ VALID_METRICS = {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H",
 )
 def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: float) -> None:
     assert base_score(metrics) == expected
+
+
+# --- validate ---
 
 
 @pytest.mark.parametrize("metrics", [[], None, (), 42, "string", 3.14])
@@ -70,3 +73,18 @@ def test_validate_rejects_non_string_value(value: object) -> None:
 def test_validate_rejects_invalid_value(metric: str, value: str) -> None:
     with pytest.raises(CvssError, match=f"{metric} must be one of"):
         validate({**VALID_METRICS, metric: value})
+
+
+# --- roundup ---
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (0, 0.0),
+        (4.0, 4.0),  # already exact
+        (4.02, 4.1),  # just above: goes up\
+    ],
+)
+def test_roundup(value: float, expected: float) -> None:
+    assert roundup(value) == expected

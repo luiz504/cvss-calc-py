@@ -1,4 +1,4 @@
-from .base_weights import BASE_METRICS
+from .base_metrics import BASE_METRICS
 
 
 class CvssError(ValueError):
@@ -30,6 +30,13 @@ def validate(metrics: dict[str, str]) -> None:
 
         if value not in allowed:
             raise CvssError(f'{metric} must be one of {", ".join(allowed)} (got "{value}")')
+
+
+def roundup(value: float) -> float:
+    int_input = round(value * 100000)
+
+    if int_input % 10000 == 0:
+        return int_input / 100000
 
 
 def base_score(metrics: dict[str, str]) -> float:
