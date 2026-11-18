@@ -83,7 +83,9 @@ def test_validate_rejects_invalid_value(metric: str, value: str) -> None:
     [
         (0, 0.0),
         (4.0, 4.0),  # already exact
-        (4.02, 4.1),  # just above: goes up\
+        (4.02, 4.1),  # just above: goes up
+        (9.76, 9.8),
+        (4.000000000000001, 4.0),  # float noise: a naive ceil(x * 10) / 10 would give 4.1
     ],
 )
 def test_roundup(value: float, expected: float) -> None:

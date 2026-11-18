@@ -38,6 +38,8 @@ def roundup(value: float) -> float:
     if int_input % 10000 == 0:
         return int_input / 100000
 
+    return (int_input // 10000 + 1) / 10
+
 
 def base_score(metrics: dict[str, str]) -> float:
     return 0.0
