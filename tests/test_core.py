@@ -109,3 +109,8 @@ def test_exploitability_pr_low_scope_changed() -> None:
 def test_impact_scope_unchanged() -> None:
     _, impact = subscores(UNCHANGED)
     assert impact == pytest.approx(5.873, abs=0.001)
+
+
+def test_impact_none_is_zero() -> None:
+    _, impact = subscores({**UNCHANGED, "C": "N", "I": "N", "A": "N"})
+    assert impact == 0
