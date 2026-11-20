@@ -1,4 +1,5 @@
-from .base_metrics import BASE_METRICS
+from .base_metrics import BASE_METRICS, BASE_METRICS_WEIGHTS
+from .formula import FORMULA
 
 
 class CvssError(ValueError):
@@ -41,8 +42,17 @@ def roundup(value: float) -> float:
     return (int_input // 10000 + 1) / 10
 
 
-def subscores(metrics: dict[str, str]) -> float:
-    return 0.0
+def subscores(metrics: dict[str, str]) -> tuple[float, float]:
+    av_weight = BASE_METRICS_WEIGHTS["AV"][metrics["AV"]]
+    ac_weight = BASE_METRICS_WEIGHTS["AC"][metrics["AC"]]
+
+    pr_weight = BASE_METRICS_WEIGHTS["PR"][metrics["PR"]]
+
+    ui_weight = BASE_METRICS_WEIGHTS["UI"][metrics["UI"]]
+
+    exploitability = FORMULA.exploitability_coefficient * av_weight * ac_weight * pr_weight * ui_weight
+
+    return exploitability, 0.0  # impact is not implemented yet
 
 
 def base_score(metrics: dict[str, str]) -> float:

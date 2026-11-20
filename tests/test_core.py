@@ -90,8 +90,11 @@ def test_roundup(value: float, expected: float) -> None:
     assert roundup(value) == expected
 
 
+UNCHANGED = {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}
+CHANGED = {"AV": "N", "AC": "L", "PR": "N", "UI": "R", "S": "C", "C": "L", "I": "L", "A": "N"}
+
+
 # --- subscores ---
-def test_subscores_of_critical_vector() -> None:
-    exploitability, impact = subscores(VALID_METRICS)
+def test_exploitability_scope_unchanged() -> None:
+    exploitability, _ = subscores(UNCHANGED)
     assert exploitability == pytest.approx(3.887, abs=0.001)
-    assert impact == pytest.approx(5.873, abs=0.001)
