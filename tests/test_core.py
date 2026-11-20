@@ -115,3 +115,9 @@ def test_impact_none_is_negative_when_score_changed() -> None:
 def test_base_score_rejects_invalid_metrics() -> None:
     with pytest.raises(CvssError):
         base_score({**VALID_METRICS, "AV": "Z"})
+
+
+# ---  scenario: scope unchanged, roundup(impact + exploitability) ---
+def test_base_score_scope_unchanged() -> None:
+    metrics = {**VALID_METRICS, "PR": "L", "C": "L", "I": "L", "A": "N"}
+    assert base_score(metrics) == 5.4
