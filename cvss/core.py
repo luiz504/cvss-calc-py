@@ -78,4 +78,5 @@ def subscores(metrics: dict[str, str]) -> tuple[float, float]:
 
 
 def base_score(metrics: dict[str, str]) -> float:
+    validate(metrics)
     return 0.0

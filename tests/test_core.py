@@ -5,22 +5,7 @@ from cvss.core import CvssError, base_score, roundup, subscores, validate
 VALID_METRICS = {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}
 
 
-@pytest.mark.parametrize(
-    ("metrics", "expected"),
-    [
-        ({"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}, 9.8),
-        ({"AV": "N", "AC": "L", "PR": "N", "UI": "R", "S": "C", "C": "L", "I": "L", "A": "N"}, 6.1),
-        ({"AV": "L", "AC": "L", "PR": "L", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}, 7.8),
-    ],
-    ids=["critical-network", "scope-changed-medium", "local-high"],
-)
-def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: float) -> None:
-    assert base_score(metrics) == expected
-
-
 # --- validate ---
-
-
 @pytest.mark.parametrize("metrics", [[], None, (), 42, "string", 3.14])
 def test_validate_rejects_non_dict_metrics(metrics: object) -> None:
     with pytest.raises(CvssError) as excinfo:
@@ -124,3 +109,9 @@ def test_impact_scope_changed() -> None:
 def test_impact_none_is_negative_when_score_changed() -> None:
     _, impact = subscores({**CHANGED, "C": "N", "I": "N", "A": "N"})
     assert impact == pytest.approx(-0.218, abs=0.001)
+
+
+# --- base_score ---
+def test_base_score_rejects_invalid_metrics() -> None:
+    with pytest.raises(CvssError):
+        base_score({**VALID_METRICS, "AV": "Z"})

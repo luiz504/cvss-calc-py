@@ -30,5 +30,6 @@
     },
     "peacock.color": "#111930",
     "cSpell.language": "en,pt-BR",
-    "cSpell.words": ["cvss", "roundup", "subscores", "pytest", "ruff"]
+    "cSpell.words": ["cvss", "roundup", "subscores", "pytest", "ruff"],
+    "python.analysis.autoImportCompletions": true
 }
