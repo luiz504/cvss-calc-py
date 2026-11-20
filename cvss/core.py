@@ -46,7 +46,6 @@ def subscores(metrics: dict[str, str]) -> tuple[float, float]:
     av_weight = BASE_METRICS_WEIGHTS["AV"][metrics["AV"]]
     ac_weight = BASE_METRICS_WEIGHTS["AC"][metrics["AC"]]
 
-    print(f"😈😈😈 DEBUG: scope {metrics['S']}")
     scope_changed = metrics["S"] == "C"
 
     if scope_changed:
@@ -58,7 +57,16 @@ def subscores(metrics: dict[str, str]) -> tuple[float, float]:
 
     exploitability = FORMULA.exploitability_coefficient * av_weight * ac_weight * pr_weight * ui_weight
 
-    return exploitability, 0.0  # impact is not implemented yet
+    c_weight = BASE_METRICS_WEIGHTS["C"][metrics["C"]]
+    i_weight = BASE_METRICS_WEIGHTS["I"][metrics["I"]]
+    a_weight = BASE_METRICS_WEIGHTS["A"][metrics["A"]]
+
+    # Base metrics equation: 7.1 of CVSS v3.1 Specification
+    iss = 1 - ((1 - c_weight) * (1 - i_weight) * (1 - a_weight))
+
+    impact = FORMULA.impact_coefficient_unchanged * iss
+
+    return exploitability, impact
 
 
 def base_score(metrics: dict[str, str]) -> float:

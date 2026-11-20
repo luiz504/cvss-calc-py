@@ -104,3 +104,8 @@ def test_exploitability_pr_low_scope_changed() -> None:
     # PR:L is 0.62 when unchanged but 0.68 when changed
     exploitability, _ = subscores({**UNCHANGED, "PR": "L", "S": "C"})
     assert exploitability == pytest.approx(3.110, abs=0.001)
+
+
+def test_impact_scope_unchanged() -> None:
+    _, impact = subscores(UNCHANGED)
+    assert impact == pytest.approx(5.873, abs=0.001)
