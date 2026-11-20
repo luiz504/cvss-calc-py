@@ -127,3 +127,9 @@ def test_base_score_scope_unchanged() -> None:
 def test_base_score_scope_changed_multiplies_total() -> None:
     metrics = {**VALID_METRICS, "PR": "L", "S": "C", "C": "L", "I": "L", "A": "N"}
     assert base_score(metrics) == 6.4  # the same vector with S:U is 5.4
+
+
+# --- scenario: `min(total, max_score)`, capped at 10 (uncapped it would be 10.8) ---
+def test_base_score_is_capped_at_10() -> None:
+    metrics = {**VALID_METRICS, "S": "C"}
+    assert base_score(metrics) == 10.0

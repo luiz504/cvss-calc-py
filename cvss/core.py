@@ -89,4 +89,4 @@ def base_score(metrics: dict[str, str]) -> float:
     if score_changed:
         total = total * FORMULA.scope_changed_multiplier
 
-    return roundup(total)
+    return roundup(min(total, FORMULA.max_score))
