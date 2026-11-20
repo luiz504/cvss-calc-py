@@ -111,7 +111,7 @@ def test_impact_scope_unchanged() -> None:
     assert impact == pytest.approx(5.873, abs=0.001)
 
 
-def test_impact_none_is_zero() -> None:
+def test_impact_none_is_zero_when_score_unchanged() -> None:
     _, impact = subscores({**UNCHANGED, "C": "N", "I": "N", "A": "N"})
     assert impact == 0
 
@@ -119,3 +119,8 @@ def test_impact_none_is_zero() -> None:
 def test_impact_scope_changed() -> None:
     _, impact = subscores(CHANGED)
     assert impact == pytest.approx(2.727, abs=0.001)
+
+
+def test_impact_none_is_negative_when_score_changed() -> None:
+    _, impact = subscores({**CHANGED, "C": "N", "I": "N", "A": "N"})
+    assert impact == pytest.approx(-0.218, abs=0.001)
