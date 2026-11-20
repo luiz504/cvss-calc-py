@@ -28,7 +28,7 @@ test: install ## run tests once
 	$(PY) -m pytest
 
 watch: install ## re-run tests on save
-	$(VENV)/bin/ptw .
+	$(VENV)/bin/ptw --now --clear --patterns '**/*.py' --ignore-patterns '**/.venv/**' .
 
 check: install ## pre-commit gate: lint + format + tests
 	$(VENV)/bin/ruff check
