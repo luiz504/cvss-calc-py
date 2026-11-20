@@ -64,7 +64,15 @@ def subscores(metrics: dict[str, str]) -> tuple[float, float]:
     # Base metrics equation: 7.1 of CVSS v3.1 Specification
     iss = 1 - ((1 - c_weight) * (1 - i_weight) * (1 - a_weight))
 
-    impact = FORMULA.impact_coefficient_unchanged * iss
+    if scope_changed:
+        coefficient = FORMULA.impact_coefficient_changed * (iss - FORMULA.impact_changed_offset)
+        penalty = FORMULA.impact_penalty_coefficient * (
+            (iss - FORMULA.impact_penalty_offset) ** FORMULA.impact_penalty_exponent
+        )
+        impact = coefficient - penalty
+
+    else:
+        impact = FORMULA.impact_coefficient_unchanged * iss
 
     return exploitability, impact
 
