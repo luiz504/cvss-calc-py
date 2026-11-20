@@ -1,4 +1,4 @@
-from .base_metrics import BASE_METRICS, BASE_METRICS_WEIGHTS
+from .base_metrics import BASE_METRICS, BASE_METRICS_WEIGHTS, PR_WEIGHTS_SCOPE_CHANGED
 from .formula import FORMULA
 
 
@@ -46,7 +46,13 @@ def subscores(metrics: dict[str, str]) -> tuple[float, float]:
     av_weight = BASE_METRICS_WEIGHTS["AV"][metrics["AV"]]
     ac_weight = BASE_METRICS_WEIGHTS["AC"][metrics["AC"]]
 
-    pr_weight = BASE_METRICS_WEIGHTS["PR"][metrics["PR"]]
+    print(f"😈😈😈 DEBUG: scope {metrics['S']}")
+    scope_changed = metrics["S"] == "C"
+
+    if scope_changed:
+        pr_weight = PR_WEIGHTS_SCOPE_CHANGED[metrics["PR"]]
+    else:
+        pr_weight = BASE_METRICS_WEIGHTS["PR"][metrics["PR"]]
 
     ui_weight = BASE_METRICS_WEIGHTS["UI"][metrics["UI"]]
 

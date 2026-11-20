@@ -98,3 +98,9 @@ CHANGED = {"AV": "N", "AC": "L", "PR": "N", "UI": "R", "S": "C", "C": "L", "I": 
 def test_exploitability_scope_unchanged() -> None:
     exploitability, _ = subscores(UNCHANGED)
     assert exploitability == pytest.approx(3.887, abs=0.001)
+
+
+def test_exploitability_pr_low_scope_changed() -> None:
+    # PR:L is 0.62 when unchanged but 0.68 when changed
+    exploitability, _ = subscores({**UNCHANGED, "PR": "L", "S": "C"})
+    assert exploitability == pytest.approx(3.110, abs=0.001)
