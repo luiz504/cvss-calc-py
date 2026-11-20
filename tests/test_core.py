@@ -121,3 +121,9 @@ def test_base_score_rejects_invalid_metrics() -> None:
 def test_base_score_scope_unchanged() -> None:
     metrics = {**VALID_METRICS, "PR": "L", "C": "L", "I": "L", "A": "N"}
     assert base_score(metrics) == 5.4
+
+
+# ---  scenario / `if S == "C"`: the total is multiplied by 1.08 ---
+def test_base_score_scope_changed_multiplies_total() -> None:
+    metrics = {**VALID_METRICS, "PR": "L", "S": "C", "C": "L", "I": "L", "A": "N"}
+    assert base_score(metrics) == 6.4  # the same vector with S:U is 5.4

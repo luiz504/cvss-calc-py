@@ -13,5 +13,7 @@ class FormulaConstants:
     impact_penalty_offset: float = 0.02
     impact_penalty_exponent: int = 15
 
+    scope_changed_multiplier: float = 1.08
+
 
 FORMULA = FormulaConstants()
