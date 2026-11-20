@@ -1,6 +1,6 @@
 import pytest
 
-from cvss.core import CvssError, base_score, roundup, validate
+from cvss.core import CvssError, base_score, roundup, subscores, validate
 
 VALID_METRICS = {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}
 
@@ -76,8 +76,6 @@ def test_validate_rejects_invalid_value(metric: str, value: str) -> None:
 
 
 # --- roundup ---
-
-
 @pytest.mark.parametrize(
     ("value", "expected"),
     [
@@ -90,3 +88,10 @@ def test_validate_rejects_invalid_value(metric: str, value: str) -> None:
 )
 def test_roundup(value: float, expected: float) -> None:
     assert roundup(value) == expected
+
+
+# --- subscores ---
+def test_subscores_of_critical_vector() -> None:
+    exploitability, impact = subscores(VALID_METRICS)
+    assert exploitability == pytest.approx(3.887, abs=0.001)
+    assert impact == pytest.approx(5.873, abs=0.001)

@@ -41,5 +41,9 @@ def roundup(value: float) -> float:
     return (int_input // 10000 + 1) / 10
 
 
+def subscores(metrics: dict[str, str]) -> float:
+    return 0.0
+
+
 def base_score(metrics: dict[str, str]) -> float:
     return 0.0
