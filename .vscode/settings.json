@@ -28,5 +28,7 @@
         "titleBar.inactiveBackground": "#11193099",
         "titleBar.inactiveForeground": "#e7e7e799"
     },
-    "peacock.color": "#111930"
+    "peacock.color": "#111930",
+    "cSpell.language": "en,pt-BR",
+    "cSpell.words": ["cvss", "roundup", "subscores", "pytest", "ruff"]
 }
