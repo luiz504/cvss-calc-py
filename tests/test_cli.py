@@ -18,8 +18,10 @@ def fake_input(monkeypatch: pytest.MonkeyPatch, answers: list[str]) -> list[str]
     return prompts
 
 
-def test_fake_input(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
-    fake_input(monkeypatch, ["X", "Z", *VALID_ANSWERS])
+def test_cli_asks_again_until_the_answer_is_valid(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    prompts = fake_input(monkeypatch, ["X", "Z", *VALID_ANSWERS])
 
     run()
 
@@ -27,6 +29,11 @@ def test_fake_input(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixtu
 
     assert 'AV must be one of N, A, L, P (got "X")' in output
     assert 'AV must be one of N, A, L, P (got "Z")' in output
+
+    asked = []
+    for prompt in prompts:
+        asked.append(prompt.split(" ")[0])
+    assert asked == ["AV", "AV", "AV", "AC", "PR", "UI", "S", "C", "I", "A"]
 
 
 def test_cli_prints_score(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
