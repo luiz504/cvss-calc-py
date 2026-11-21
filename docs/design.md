@@ -14,14 +14,14 @@ Decisions for how the code is organised. The rules being implemented are in [dom
 ## `cvss/core.py` (pure: no I/O, no printing)
 
 ```text
-BASE_METRICS                             # per metric: a label key and its allowed values {letter: key}
+BASE_METRICS                             # per metric: a label key, a group (EXPLOITABILITY | SCOPE | IMPACT) and its allowed values {letter: key}
 BASE_METRICS_WEIGHTS                    # weights for the formula
 PR_WEIGHTS_SCOPE_CHANGED                 # PR weights when the scope is changed
 FORMULA                                  # frozen dataclass from formula.py: formula numbers, severity limits
-validate(metrics) -> None                # raises CvssError
-subscores(metrics) -> (exploitability, impact)   # unrounded
-base_score(metrics) -> float             # validates, then computes (one decimal)
-severity(score) -> str                   # None | Low | Medium | High | Critical
+validate_metrics(metrics) -> None        # raises CvssError
+calculate_subscores(metrics) -> (exploitability, impact)   # unrounded
+calculate_base_score(metrics) -> float   # validates, then computes (one decimal)
+rate_severity(score) -> str             # None | Low | Medium | High | Critical
 parse_vector(vector) -> dict[str, str]   # optional, cut first if short on time
 build_vector(metrics) -> str             # "CVSS:3.1/AV:N/..."
 ```

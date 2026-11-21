@@ -6,7 +6,7 @@ class CvssError(ValueError):
     pass
 
 
-def validate(metrics: dict[str, str]) -> None:
+def validate_metrics(metrics: dict[str, str]) -> None:
     # 0. the input itself must be a dict (it can come from JSON or the CLI)
     if not isinstance(metrics, dict):
         raise CvssError("Metrics must be a dictionary")
@@ -42,7 +42,7 @@ def roundup(value: float) -> float:
     return (int_input // 10000 + 1) / 10
 
 
-def subscores(metrics: dict[str, str]) -> tuple[float, float]:
+def calculate_subscores(metrics: dict[str, str]) -> tuple[float, float]:
     av_weight = BASE_METRICS_WEIGHTS["AV"][metrics["AV"]]
     ac_weight = BASE_METRICS_WEIGHTS["AC"][metrics["AC"]]
 
@@ -77,13 +77,13 @@ def subscores(metrics: dict[str, str]) -> tuple[float, float]:
     return exploitability, impact
 
 
-def base_score(metrics: dict[str, str]) -> float:
-    validate(metrics)
+def calculate_base_score(metrics: dict[str, str]) -> float:
+    validate_metrics(metrics)
 
-    exploitability, impact = subscores(metrics)
+    exploitability, impact = calculate_subscores(metrics)
 
     # No impact at all: the score is 0, whatever the exploitability is.
-    # subscores returns the raw value, so impact can be negative (scope changed, C/I/A all None: about -0.218).
+    # calculate_subscores returns the raw value: impact can be negative (scope changed, C/I/A all None, about -0.218).
     if impact <= 0:
         return 0.0
 
@@ -97,7 +97,7 @@ def base_score(metrics: dict[str, str]) -> float:
     return roundup(min(total, FORMULA.max_score))
 
 
-def severity(score: float) -> str:
+def rate_severity(score: float) -> str:
     if isinstance(score, bool) or not isinstance(score, int | float):
         raise CvssError("Score must be a number")
 
@@ -120,7 +120,7 @@ def severity(score: float) -> str:
 
 
 def build_vector(metrics: dict[str, str]) -> str:
-    validate(metrics)
+    validate_metrics(metrics)
 
     vector = FORMULA.vector_prefix
 
@@ -128,6 +128,3 @@ def build_vector(metrics: dict[str, str]) -> str:
         vector = vector + "/" + metric + ":" + metrics[metric]
 
     return vector
-
-
-# Todo improve function naming to represent actions, to have better meaning and avoiding conflict with variables

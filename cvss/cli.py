@@ -1,5 +1,5 @@
 from cvss.base_metrics import BASE_METRICS
-from cvss.core import base_score, build_vector, severity
+from cvss.core import build_vector, calculate_base_score, rate_severity
 
 
 def run() -> None:
@@ -28,13 +28,10 @@ def run() -> None:
 
         metrics[metric] = answer
 
-    score = base_score(metrics)
-    _severity = severity(score)
+    score = calculate_base_score(metrics)
+    severity = rate_severity(score)
     vector = build_vector(metrics)
 
     print(f"Score: {score}")
-    print(f"Severity: {_severity}")
+    print(f"Severity: {severity}")
     print(f"Vector: {vector}")
-
-
-# Todo: add a semantic prefix per question showing the step group, and the step number
