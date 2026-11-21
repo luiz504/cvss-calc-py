@@ -32,7 +32,7 @@ python main.py cli
 python main.py web
 ```
 
-With `make` (Linux/macOS): `make cli` or `make web`.
+With `make` (Linux/macOS): `make run-cli` (`make run-web` is planned).
 
 ## Development
 
@@ -41,8 +41,9 @@ With `make` (Linux/macOS): `make cli` or `make web`.
 | `make help` | list all commands |
 | `make install` | create `.venv` and install the dev tools |
 | `make test` / `make watch` | run the tests once / on every save |
-| `make lint` / `make format` | ruff check with autofix / ruff format |
-| `make check` | pre-commit gate: lint, format check and tests |
+| `make lint` / `make lint-fix` | ruff check (read-only) / ruff check with autofix |
+| `make format` / `make format-check` | ruff format (rewrites files) / format check (read-only) |
+| `make check` | pre-commit gate: `lint`, `format-check` and `test` (read-only) |
 | `make clean` | delete `.venv` and caches |
 
 Commits follow [Conventional Commits](https://www.conventionalcommits.org/).

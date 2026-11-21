@@ -2,10 +2,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "CLI (cvss.cli)",
+            "name": "CLI (main.py cli)",
             "type": "debugpy",
             "request": "launch",
-            "module": "cvss.cli",
+            "program": "${workspaceFolder}/main.py",
+            "args": ["cli"],
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}",
             "justMyCode": true
