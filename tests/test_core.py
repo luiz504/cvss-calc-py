@@ -133,3 +133,10 @@ def test_base_score_scope_changed_multiplies_total() -> None:
 def test_base_score_is_capped_at_10() -> None:
     metrics = {**VALID_METRICS, "S": "C"}
     assert base_score(metrics) == 10.0
+
+
+# ---  scenario / `if impact <= 0`: no impact means 0, even though exploitability is high ---
+@pytest.mark.parametrize("scope", ["U", "C"])
+def test_base_score_is_zero_without_impact(scope: str) -> None:
+    metrics = {**VALID_METRICS, "S": scope, "C": "N", "I": "N", "A": "N"}
+    assert base_score(metrics) == 0.0  # for C the impact is negative, see the subscores test

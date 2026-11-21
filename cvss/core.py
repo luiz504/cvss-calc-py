@@ -82,6 +82,11 @@ def base_score(metrics: dict[str, str]) -> float:
 
     exploitability, impact = subscores(metrics)
 
+    # No impact at all: the score is 0, whatever the exploitability is.
+    # subscores returns the raw value, so impact can be negative (scope changed, C/I/A all None: about -0.218).
+    if impact <= 0:
+        return 0.0
+
     total = exploitability + impact
 
     score_changed = metrics["S"] == "C"
