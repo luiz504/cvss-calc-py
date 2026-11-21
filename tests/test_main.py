@@ -29,3 +29,8 @@ def test_main_rejects_unknown_command(calls: list[str], command: str) -> None:
 def test_main_rejects_extra_arguments(calls: list[str], command: str) -> None:
     assert entry.main(["main.py", command, "extra"]) == 2
     assert calls == []
+
+
+def test_main_cli_runs_the_interactive_mode(calls: list[str]) -> None:
+    assert entry.main(["main.py", "cli"]) == 0
+    assert calls == ["run"]
