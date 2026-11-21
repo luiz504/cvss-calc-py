@@ -23,3 +23,9 @@ def test_main_without_command_prints_usage(calls: list[str], capsys: pytest.Capt
 def test_main_rejects_unknown_command(calls: list[str], command: str) -> None:
     assert entry.main(["main.py", command]) == 2
     assert calls == []
+
+
+@pytest.mark.parametrize("command", ["cli", "web"])
+def test_main_rejects_extra_arguments(calls: list[str], command: str) -> None:
+    assert entry.main(["main.py", command, "extra"]) == 2
+    assert calls == []
