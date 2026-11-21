@@ -7,6 +7,7 @@ import main as entry
 def calls(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     called = []
     monkeypatch.setattr(entry, "run", lambda: called.append("run"))
+    monkeypatch.setattr(entry, "run_vector", lambda vector: called.append(vector) or 0)
     return called
 
 
@@ -32,3 +33,13 @@ def test_main_rejects_extra_arguments(calls: list[str]) -> None:
 def test_main_cli_runs_the_interactive_mode(calls: list[str]) -> None:
     assert entry.main(["main.py", "cli"]) == 0
     assert calls == ["run"]
+
+
+def test_main_rejects_vector_flag_without_value(calls: list[str]) -> None:
+    assert entry.main(["main.py", "cli", "--vector"]) == 2
+    assert calls == []
+
+
+def test_main_cli_vector_runs_the_one_shot_mode(calls: list[str]) -> None:
+    assert entry.main(["main.py", "cli", "--vector", "CVSS:3.1/AV:N"]) == 0
+    assert calls == ["CVSS:3.1/AV:N"]

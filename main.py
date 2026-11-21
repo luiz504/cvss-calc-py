@@ -1,6 +1,8 @@
 import sys
 
-from cvss.cli import run
+from cvss.cli import run, run_vector
+
+USAGE = "Usage: python main.py cli [--vector CVSS:3.1/AV:N/...]"
 
 
 def main(argv: list[str]) -> int:
@@ -8,7 +10,10 @@ def main(argv: list[str]) -> int:
         run()
         return 0
 
-    print("Usage: python main.py cli")
+    if len(argv) == 4 and argv[1] == "cli" and argv[2] == "--vector":
+        return run_vector(argv[3])
+
+    print(USAGE)
     return 2
 
 
