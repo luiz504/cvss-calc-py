@@ -43,3 +43,11 @@ def test_cli_prints_severity(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Cap
     run()
 
     assert "Severity: Critical" in capsys.readouterr().out
+
+
+def test_cli_prints_vector(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    fake_input(monkeypatch, VALID_ANSWERS)
+
+    run()
+
+    assert "Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H" in capsys.readouterr().out

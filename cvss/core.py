@@ -128,3 +128,6 @@ def build_vector(metrics: dict[str, str]) -> str:
         vector = vector + "/" + metric + ":" + metrics[metric]
 
     return vector
+
+
+# Todo improve function naming to represent actions, to have better meaning and avoiding conflict with variables
