@@ -1,7 +1,6 @@
 import sys
 
 from cvss.cli import run
-from cvss.web import serve
 
 
 def main(argv: list[str]) -> int:
@@ -9,11 +8,7 @@ def main(argv: list[str]) -> int:
         run()
         return 0
 
-    if len(argv) == 2 and argv[1] == "web":
-        serve()
-        return 0
-
-    print("Usage: python main.py cli|web")
+    print("Usage: python main.py cli")
     return 2
 
 

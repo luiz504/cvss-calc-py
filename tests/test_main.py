@@ -7,7 +7,6 @@ import main as entry
 def calls(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     called = []
     monkeypatch.setattr(entry, "run", lambda: called.append("run"))
-    monkeypatch.setattr(entry, "serve", lambda: called.append("serve"))
     return called
 
 
@@ -15,27 +14,21 @@ def test_main_without_command_prints_usage(calls: list[str], capsys: pytest.Capt
     exit_code = entry.main(["main.py"])
 
     assert exit_code == 2
-    assert "Usage: python main.py cli|web" in capsys.readouterr().out
+    assert "Usage: python main.py cli" in capsys.readouterr().out
     assert calls == []
 
 
-@pytest.mark.parametrize("command", ["nope", "CLI", "--vector"])
+@pytest.mark.parametrize("command", ["nope", "CLI", "--vector", "web"])
 def test_main_rejects_unknown_command(calls: list[str], command: str) -> None:
     assert entry.main(["main.py", command]) == 2
     assert calls == []
 
 
-@pytest.mark.parametrize("command", ["cli", "web"])
-def test_main_rejects_extra_arguments(calls: list[str], command: str) -> None:
-    assert entry.main(["main.py", command, "extra"]) == 2
+def test_main_rejects_extra_arguments(calls: list[str]) -> None:
+    assert entry.main(["main.py", "cli", "extra"]) == 2
     assert calls == []
 
 
 def test_main_cli_runs_the_interactive_mode(calls: list[str]) -> None:
     assert entry.main(["main.py", "cli"]) == 0
     assert calls == ["run"]
-
-
-def test_main_web_starts_the_server(calls: list[str]) -> None:
-    assert entry.main(["main.py", "web"]) == 0
-    assert calls == ["serve"]
