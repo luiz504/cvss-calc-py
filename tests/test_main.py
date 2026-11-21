@@ -17,3 +17,9 @@ def test_main_without_command_prints_usage(calls: list[str], capsys: pytest.Capt
     assert exit_code == 2
     assert "Usage: python main.py cli|web" in capsys.readouterr().out
     assert calls == []
+
+
+@pytest.mark.parametrize("command", ["nope", "CLI", "--vector"])
+def test_main_rejects_unknown_command(calls: list[str], command: str) -> None:
+    assert entry.main(["main.py", command]) == 2
+    assert calls == []

@@ -5,11 +5,12 @@ from cvss.web import serve
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) == 2 and argv[1] == "cli":
+    command = argv[1]
+    if len(argv) == 2 and command == "cli":
         run()
         return 0
 
-    if len(argv) == 2 and argv[1] == "web":
+    if len(argv) == 2 and command == "web":
         serve()
         return 0
 
