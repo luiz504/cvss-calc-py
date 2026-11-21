@@ -32,7 +32,4 @@ def run() -> None:
     print(f"Vector: {vector}")
 
 
-if __name__ == "__main__":
-    run()
-
 # Todo: add a semantic prefix per question showing the step group, and the step number
