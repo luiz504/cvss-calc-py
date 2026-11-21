@@ -248,3 +248,8 @@ def test_parse_vector_rejects_malformed_part(vector: str) -> None:
 
 def test_parse_vector_returns_the_metrics() -> None:
     assert parse_vector(VALID_VECTOR) == VALID_METRICS
+
+
+def test_parse_vector_rejects_duplicate_metric() -> None:
+    with pytest.raises(CvssError, match="Duplicate metric: AV"):
+        parse_vector(VALID_VECTOR + "/AV:L")

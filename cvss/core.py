@@ -150,6 +150,9 @@ def parse_vector(vector: str) -> dict[str, str]:
         metric = pieces[0]
         value = pieces[1]
 
+        if metric in metrics:
+            raise CvssError(f"Duplicate metric: {metric}")
+
         metrics[metric] = value
 
     return metrics
