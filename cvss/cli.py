@@ -28,13 +28,7 @@ def run() -> None:
 
         metrics[metric] = answer
 
-    score = calculate_base_score(metrics)
-    severity = rate_severity(score)
-    vector = build_vector(metrics)
-
-    print(f"Score: {score}")
-    print(f"Severity: {severity}")
-    print(f"Vector: {vector}")
+    print_result(metrics)
 
 
 def run_vector(vector: str) -> int:
