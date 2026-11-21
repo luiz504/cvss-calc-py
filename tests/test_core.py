@@ -140,3 +140,17 @@ def test_base_score_is_capped_at_10() -> None:
 def test_base_score_is_zero_without_impact(scope: str) -> None:
     metrics = {**VALID_METRICS, "S": scope, "C": "N", "I": "N", "A": "N"}
     assert base_score(metrics) == 0.0  # for C the impact is negative, see the subscores test
+
+
+# ---  cross-check with the published reference vectors (docs/domain.md): no new code ---
+@pytest.mark.parametrize(
+    ("metrics", "expected"),
+    [
+        ({"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}, 9.8),
+        ({"AV": "N", "AC": "L", "PR": "N", "UI": "R", "S": "C", "C": "L", "I": "L", "A": "N"}, 6.1),
+        ({"AV": "L", "AC": "L", "PR": "L", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}, 7.8),
+    ],
+    ids=["critical-network", "scope-changed-medium", "local-high"],
+)
+def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: float) -> None:
+    assert base_score(metrics) == expected
