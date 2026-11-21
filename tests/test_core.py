@@ -266,3 +266,7 @@ def test_parse_vector_rejects_duplicate_metric() -> None:
 def test_parse_vector_rejects_invalid_metrics(vector: str) -> None:
     with pytest.raises(CvssError):
         parse_vector(vector)
+
+
+def test_parse_vector_accepts_any_order() -> None:
+    assert parse_vector("CVSS:3.1/A:H/I:H/C:H/S:U/UI:N/PR:N/AC:L/AV:N") == VALID_METRICS
