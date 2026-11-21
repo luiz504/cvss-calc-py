@@ -89,9 +89,9 @@ def base_score(metrics: dict[str, str]) -> float:
 
     total = exploitability + impact
 
-    score_changed = metrics["S"] == "C"
+    scope_changed = metrics["S"] == "C"
 
-    if score_changed:
+    if scope_changed:
         total = total * FORMULA.scope_changed_multiplier
 
     return roundup(min(total, FORMULA.max_score))

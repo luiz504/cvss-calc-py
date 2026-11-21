@@ -1,4 +1,12 @@
-BASE_METRICS: dict[str, dict[str, dict[str, str]]] = {
+from typing import TypedDict
+
+
+class MetricDefinition(TypedDict):
+    label: str
+    values: dict[str, str]
+
+
+BASE_METRICS: dict[str, MetricDefinition] = {
     "AV": {
         "label": "ATTACK_VECTOR",
         "values": {
