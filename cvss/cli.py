@@ -4,8 +4,11 @@ from cvss.core import base_score, build_vector, severity
 
 def run() -> None:
     metrics = {}
+    total_steps = len(BASE_METRICS)
+    step = 0
 
     for metric in BASE_METRICS:
+        step = step + 1
         definition = BASE_METRICS[metric]
         values = definition["values"]
 
@@ -13,8 +16,10 @@ def run() -> None:
         for letter in values:
             options = options + letter + "=" + values[letter] + " "
 
+        prefix = f"[{step}/{total_steps} {definition['group']}]"
+
         while True:
-            answer = input(f"{metric} {definition['label']} ({options.strip()}): ").strip().upper()
+            answer = input(f"{prefix} {metric} {definition['label']} ({options.strip()}): ").strip().upper()
 
             if answer in values:
                 break

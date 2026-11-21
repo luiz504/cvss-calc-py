@@ -30,10 +30,24 @@ def test_cli_asks_again_until_the_answer_is_valid(
     assert 'AV must be one of N, A, L, P (got "X")' in output
     assert 'AV must be one of N, A, L, P (got "Z")' in output
 
-    asked = []
-    for prompt in prompts:
-        asked.append(prompt.split(" ")[0])
-    assert asked == ["AV", "AV", "AV", "AC", "PR", "UI", "S", "C", "I", "A"]
+    # AV is asked three times (X, Z, N) and keeps its step: the same question comes back until it is valid
+    expected_starts = [
+        "[1/8 EXPLOITABILITY] AV ",
+        "[1/8 EXPLOITABILITY] AV ",
+        "[1/8 EXPLOITABILITY] AV ",
+        "[2/8 EXPLOITABILITY] AC ",
+        "[3/8 EXPLOITABILITY] PR ",
+        "[4/8 EXPLOITABILITY] UI ",
+        "[5/8 SCOPE] S ",
+        "[6/8 IMPACT] C ",
+        "[7/8 IMPACT] I ",
+        "[8/8 IMPACT] A ",
+    ]
+
+    assert len(prompts) == len(expected_starts)
+
+    for index, expected_start in enumerate(expected_starts):
+        assert prompts[index].startswith(expected_start)
 
 
 def test_cli_prints_score(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
@@ -65,7 +79,7 @@ def test_cli_prompt_lists_the_options(monkeypatch: pytest.MonkeyPatch) -> None:
 
     run()
 
-    assert prompts[0] == "AV ATTACK_VECTOR (N=NETWORK A=ADJACENT L=LOCAL P=PHYSICAL): "
+    assert prompts[0] == "[1/8 EXPLOITABILITY] AV ATTACK_VECTOR (N=NETWORK A=ADJACENT L=LOCAL P=PHYSICAL): "
 
 
 def test_cli_accepts_lowercase_and_spaces(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
@@ -76,7 +90,7 @@ def test_cli_accepts_lowercase_and_spaces(monkeypatch: pytest.MonkeyPatch, capsy
     assert "Score: 9.8" in capsys.readouterr().out
 
 
-def test_cli_asks_each_metric_once_in_order(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_cli_prompts_show_step_and_group_in_order(monkeypatch: pytest.MonkeyPatch) -> None:
     prompts = fake_input(monkeypatch, VALID_ANSWERS)
 
     run()
@@ -85,14 +99,21 @@ def test_cli_asks_each_metric_once_in_order(monkeypatch: pytest.MonkeyPatch) -> 
     for prompt in prompts:
         asked.append(prompt.split(" ")[0])
 
-    assert asked == ["AV", "AC", "PR", "UI", "S", "C", "I", "A"]
     prompts = fake_input(monkeypatch, VALID_ANSWERS)
 
     run()
 
-    asked = []
+    expected_starts = [
+        "[1/8 EXPLOITABILITY] AV ",
+        "[2/8 EXPLOITABILITY] AC ",
+        "[3/8 EXPLOITABILITY] PR ",
+        "[4/8 EXPLOITABILITY] UI ",
+        "[5/8 SCOPE] S ",
+        "[6/8 IMPACT] C ",
+        "[7/8 IMPACT] I ",
+        "[8/8 IMPACT] A ",
+    ]
 
-    for prompt in prompts:
-        asked.append(prompt.split(" ")[0])
-
-    assert asked == ["AV", "AC", "PR", "UI", "S", "C", "I", "A"]
+    assert len(prompts) == len(expected_starts)
+    for index, expected_start in enumerate(expected_starts):
+        assert prompts[index].startswith(expected_start)
