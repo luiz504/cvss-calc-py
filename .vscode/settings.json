@@ -38,5 +38,7 @@
         "ruff",
         "subscores"
     ],
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.analysis.typeCheckingMode": "standard",
     "python.analysis.autoImportCompletions": true
 }

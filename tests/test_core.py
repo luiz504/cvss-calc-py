@@ -43,7 +43,7 @@ def test_validate_rejects_unknown_metrics() -> None:
 def test_validate_rejects_non_string_value(value: object) -> None:
     # the web mode can receive JSON values like ["N"], null or 1
     with pytest.raises(CvssError, match="AV must be a string"):
-        validate({**VALID_METRICS, "AV": value})
+        validate({**VALID_METRICS, "AV": value})  # type: ignore[arg-type]  # invalid value on purpose
 
 
 @pytest.mark.parametrize(
@@ -162,7 +162,7 @@ def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: 
 @pytest.mark.parametrize("score", ["9.8", None, True, -0.1, 10.1])
 def test_severity_rejects_invalid_score(score: object) -> None:
     with pytest.raises(CvssError):
-        severity(score)
+        severity(score)  # type: ignore[arg-type]  # invalid values tested on purpose
 
 
 def test_severity_none() -> None:
