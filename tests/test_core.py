@@ -221,3 +221,17 @@ def test_build_vector_ignores_input_order() -> None:
 def test_parse_vector_rejects_non_string(vector: object) -> None:
     with pytest.raises(CvssError):
         parse_vector(vector)  # type: ignore[arg-type]  # not a string, on purpose
+
+
+@pytest.mark.parametrize(
+    "vector",
+    [
+        "",
+        "AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+        "cvss:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+    ],
+)
+def test_parse_vector_rejects_wrong_prefix(vector: str) -> None:
+    with pytest.raises(CvssError, match="must start with"):
+        parse_vector(vector)
