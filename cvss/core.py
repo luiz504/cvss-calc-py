@@ -128,3 +128,10 @@ def build_vector(metrics: dict[str, str]) -> str:
         vector = vector + "/" + metric + ":" + metrics[metric]
 
     return vector
+
+
+def parse_vector(vector: str) -> dict[str, str]:
+    if not isinstance(vector, str):
+        raise CvssError("Vector must be a string")
+
+    return {}

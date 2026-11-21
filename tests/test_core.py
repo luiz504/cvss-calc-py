@@ -5,6 +5,7 @@ from cvss.core import (
     build_vector,
     calculate_base_score,
     calculate_subscores,
+    parse_vector,
     rate_severity,
     roundup,
     validate_metrics,
@@ -165,8 +166,6 @@ def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: 
 
 
 # --- severity ---
-
-
 @pytest.mark.parametrize("score", ["9.8", None, True, -0.1, 10.1])
 def test_severity_rejects_invalid_score(score: object) -> None:
     with pytest.raises(CvssError):
@@ -215,3 +214,10 @@ def test_build_vector_ignores_input_order() -> None:
         reversed_metrics[metric] = VALID_METRICS[metric]
 
     assert build_vector(reversed_metrics) == build_vector(VALID_METRICS)
+
+
+# --- parse_vector ---
+@pytest.mark.parametrize("vector", [None, 42, ["AV:N"], b"CVSS:3.1/AV:N"])
+def test_parse_vector_rejects_non_string(vector: object) -> None:
+    with pytest.raises(CvssError):
+        parse_vector(vector)  # type: ignore[arg-type]  # not a string, on purpose
