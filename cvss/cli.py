@@ -2,6 +2,16 @@ from cvss.base_metrics import BASE_METRICS
 from cvss.core import CvssError, build_vector, calculate_base_score, parse_vector, rate_severity
 
 
+def print_result(metrics: dict[str, str]) -> None:
+    score = calculate_base_score(metrics)
+    severity = rate_severity(score)
+    vector = build_vector(metrics)
+
+    print(f"Score: {score}")
+    print(f"Severity: {severity}")
+    print(f"Vector: {vector}")
+
+
 def run() -> None:
     metrics = {}
     total_steps = len(BASE_METRICS)
@@ -39,13 +49,3 @@ def run_vector(vector: str) -> int:
         return 1
     print_result(metrics)
     return 0
-
-
-def print_result(metrics: dict[str, str]) -> None:
-    score = calculate_base_score(metrics)
-    severity = rate_severity(score)
-    vector = build_vector(metrics)
-
-    print(f"Score: {score}")
-    print(f"Severity: {severity}")
-    print(f"Vector: {vector}")
