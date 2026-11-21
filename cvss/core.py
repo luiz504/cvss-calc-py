@@ -117,3 +117,9 @@ def severity(score: float) -> str:
         return "Low"
 
     return "None"
+
+
+def build_vector(metrics: dict[str, str]) -> str:
+    validate(metrics)
+
+    return "NOT_IMPLEMENTED"

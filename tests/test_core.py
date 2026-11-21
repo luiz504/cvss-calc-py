@@ -1,6 +1,6 @@
 import pytest
 
-from cvss.core import CvssError, base_score, roundup, severity, subscores, validate
+from cvss.core import CvssError, base_score, build_vector, roundup, severity, subscores, validate
 
 VALID_METRICS = {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}
 
@@ -187,3 +187,11 @@ def test_severity_high(score: float) -> None:
 @pytest.mark.parametrize("score", [9.0, 10.0])
 def test_severity_critical(score: float) -> None:
     assert severity(score) == "Critical"
+
+
+# --- build_severity ---
+
+
+def test_build_vector_rejects_invalid_metrics() -> None:
+    with pytest.raises(CvssError):
+        build_vector({"AV": "X"})
