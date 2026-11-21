@@ -97,8 +97,7 @@ def base_score(metrics: dict[str, str]) -> float:
     return roundup(min(total, FORMULA.max_score))
 
 
-def severity(score: float) -> None:
-    print("score", score)
+def severity(score: float) -> str:
     if isinstance(score, bool) or not isinstance(score, int | float):
         raise CvssError("Score must be a number")
 
