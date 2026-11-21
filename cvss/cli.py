@@ -1,4 +1,5 @@
 from cvss.base_metrics import BASE_METRICS
+from cvss.core import base_score
 
 
 def run() -> None:
@@ -21,6 +22,10 @@ def run() -> None:
             print(f'{metric} must be one of {", ".join(values)} (got "{answer}")')
 
         metrics[metric] = answer
+
+    score = base_score(metrics)
+
+    print(f"Score: {score}")
 
 
 if __name__ == "__main__":

@@ -27,3 +27,11 @@ def test_fake_input(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixtu
 
     assert 'AV must be one of N, A, L, P (got "X")' in output
     assert 'AV must be one of N, A, L, P (got "Z")' in output
+
+
+def test_cli_prints_score(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    fake_input(monkeypatch, VALID_ANSWERS)
+
+    run()
+
+    assert "Score: 9.8" in capsys.readouterr().out

@@ -31,6 +31,7 @@
     "peacock.color": "#111930",
     "cSpell.language": "en,pt-BR",
     "cSpell.words": [
+        "capsys",
         "cvss",
         "excinfo",
         "pytest",
