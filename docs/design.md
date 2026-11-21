@@ -36,7 +36,7 @@ build_vector(metrics) -> str             # "CVSS:3.1/AV:N/..."
 | `formula.py` | named constants: formula numbers, severity limits, vector prefix |
 | `base_metrics.py` | metric definitions and weights |
 | `core.py` | scoring rules, validation, severity, vector build |
-| `cli.py` | prompts, loops until each answer is valid, printing; `--vector` flag _(planned)_ |
+| `cli.py` | prompts, loops until each answer is valid, printing; `--vector` flag |
 | `main.py` | entry point: `cli` |
 
 ## Build order (one commit per step)
