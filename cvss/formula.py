@@ -22,5 +22,7 @@ class FormulaConstants:
     high_min: float = 7.0
     critical_min: float = 9.0
 
+    vector_prefix: str = "CVSS:3.1"
+
 
 FORMULA = FormulaConstants()

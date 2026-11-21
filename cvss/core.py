@@ -122,4 +122,9 @@ def severity(score: float) -> str:
 def build_vector(metrics: dict[str, str]) -> str:
     validate(metrics)
 
-    return "NOT_IMPLEMENTED"
+    vector = FORMULA.vector_prefix
+
+    for metric in BASE_METRICS:
+        vector = vector + "/" + metric + ":" + metrics[metric]
+
+    return vector

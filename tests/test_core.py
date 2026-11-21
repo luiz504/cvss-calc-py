@@ -190,8 +190,11 @@ def test_severity_critical(score: float) -> None:
 
 
 # --- build_severity ---
-
-
 def test_build_vector_rejects_invalid_metrics() -> None:
     with pytest.raises(CvssError):
         build_vector({"AV": "X"})
+
+
+# --- the vector has the prefix and every metric ---
+def test_build_vector() -> None:
+    assert build_vector(VALID_METRICS) == "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
