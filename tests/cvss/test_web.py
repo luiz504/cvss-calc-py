@@ -1,4 +1,7 @@
 import threading
+import urllib
+import urllib.error
+import urllib.request
 from collections.abc import Iterator
 
 import pytest
@@ -17,3 +20,22 @@ def base_url() -> Iterator[str]:
     server.shutdown()
     server.server_close()
     thread.join()
+
+
+def request(method: str, url: str, body: bytes | None = None) -> tuple[int, str, bytes]:
+    http_request = urllib.request.Request(url, data=body, method=method)
+
+    try:
+        with urllib.request.urlopen(http_request) as response:
+            return response.status, response.headers["Content-Type"], response.read()
+    except urllib.error.HTTPError as error:
+        return error.code, error.headers["Content-Type"], error.read()
+
+
+def test_server_binds_to_loopback_only() -> None:
+    server = create_server(port=0)
+
+    try:
+        assert server.server_address[0] == "127.0.0.1"
+    finally:
+        server.server_close()
