@@ -51,3 +51,11 @@ def test_cli_prints_vector(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Captu
     run()
 
     assert "Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H" in capsys.readouterr().out
+
+
+def test_cli_prompt_lists_the_options(monkeypatch: pytest.MonkeyPatch) -> None:
+    prompts = fake_input(monkeypatch, VALID_ANSWERS)
+
+    run()
+
+    assert prompts[0] == "AV ATTACK_VECTOR (N=NETWORK A=ADJACENT L=LOCAL P=PHYSICAL): "
