@@ -1,7 +1,7 @@
 VENV := .venv
 PY   := $(VENV)/bin/python
 
-.PHONY: help install test watch lint format check clean
+.PHONY: help install run test watch lint format check clean
 .DEFAULT_GOAL := help
 
 help: ## list commands
@@ -26,6 +26,9 @@ clean: ## delete venv and caches
 
 test: install ## run tests once
 	$(PY) -m pytest
+
+run: install ## run the CLI
+	$(PY) -m cvss.cli
 
 watch: install ## re-run tests on save
 	$(VENV)/bin/ptw --now --clear --patterns '**/*.py' --ignore-patterns '**/.venv/**' $(CURDIR)
