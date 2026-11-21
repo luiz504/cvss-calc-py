@@ -34,3 +34,8 @@ def test_main_rejects_extra_arguments(calls: list[str], command: str) -> None:
 def test_main_cli_runs_the_interactive_mode(calls: list[str]) -> None:
     assert entry.main(["main.py", "cli"]) == 0
     assert calls == ["run"]
+
+
+def test_main_web_starts_the_server(calls: list[str]) -> None:
+    assert entry.main(["main.py", "web"]) == 0
+    assert calls == ["serve"]
