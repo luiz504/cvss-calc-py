@@ -1,5 +1,5 @@
 from cvss.base_metrics import BASE_METRICS
-from cvss.core import build_vector, calculate_base_score, rate_severity
+from cvss.core import CvssError, build_vector, calculate_base_score, parse_vector, rate_severity
 
 
 def run() -> None:
@@ -35,3 +35,13 @@ def run() -> None:
     print(f"Score: {score}")
     print(f"Severity: {severity}")
     print(f"Vector: {vector}")
+
+
+def run_vector(vector: str) -> int:
+    try:
+        parse_vector(vector)
+    except CvssError as error:
+        print(error)
+        return 1
+
+    return 0

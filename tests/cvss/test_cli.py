@@ -1,6 +1,6 @@
 import pytest
 
-from cvss.cli import run
+from cvss.cli import run, run_vector
 
 VALID_ANSWERS = ["N", "L", "N", "N", "U", "H", "H", "H"]  # AV AC PR UI S C I A -> 9.8 Critical
 
@@ -117,3 +117,13 @@ def test_cli_prompts_show_step_and_group_in_order(monkeypatch: pytest.MonkeyPatc
     assert len(prompts) == len(expected_starts)
     for index, expected_start in enumerate(expected_starts):
         assert prompts[index].startswith(expected_start)
+
+
+# --- run-vector ---
+
+
+def test_cli_vector_prints_the_error_for_an_invalid_vector(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = run_vector("nope")
+
+    assert exit_code == 1
+    assert 'Vector must start with "CVSS:3.1/"' in capsys.readouterr().out
