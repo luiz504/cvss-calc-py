@@ -19,6 +19,7 @@ class FormulaConstants:
 
     low_min: float = 0.1
     medium_min: float = 4.0
+    high_min: float = 7.0
 
 
 FORMULA = FormulaConstants()

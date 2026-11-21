@@ -169,20 +169,16 @@ def test_severity_none() -> None:
     assert severity(0.0) == "None"
 
 
-@pytest.mark.parametrize(
-    "score",
-    [
-        0.1,
-        3.9,
-    ],
-)
+@pytest.mark.parametrize("score", [0.1, 3.9])
 def test_severity_low(score: float) -> None:
     assert severity(score) == "Low"
 
 
-@pytest.mark.parametrize(
-    "score",
-    [4.0, 6.9],
-)
+@pytest.mark.parametrize("score", [4.0, 6.9])
 def test_severity_medium(score: float) -> None:
     assert severity(score) == "Medium"
+
+
+@pytest.mark.parametrize("score", [7.0, 8.9])
+def test_severity_high(score: float) -> None:
+    assert severity(score) == "High"
