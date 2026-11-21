@@ -3,12 +3,14 @@ from typing import TypedDict
 
 class MetricDefinition(TypedDict):
     label: str
+    group: str
     values: dict[str, str]
 
 
 BASE_METRICS: dict[str, MetricDefinition] = {
     "AV": {
         "label": "ATTACK_VECTOR",
+        "group": "EXPLOITABILITY",
         "values": {
             "N": "NETWORK",
             "A": "ADJACENT",
@@ -18,6 +20,7 @@ BASE_METRICS: dict[str, MetricDefinition] = {
     },
     "AC": {
         "label": "ATTACK_COMPLEXITY",
+        "group": "EXPLOITABILITY",
         "values": {
             "L": "LOW",
             "H": "HIGH",
@@ -25,6 +28,7 @@ BASE_METRICS: dict[str, MetricDefinition] = {
     },
     "PR": {
         "label": "PRIVILEGES_REQUIRED",
+        "group": "EXPLOITABILITY",
         "values": {
             "N": "NONE",
             "L": "LOW",
@@ -33,6 +37,7 @@ BASE_METRICS: dict[str, MetricDefinition] = {
     },
     "UI": {
         "label": "USER_INTERACTION",
+        "group": "EXPLOITABILITY",
         "values": {
             "N": "NONE",
             "R": "REQUIRED",
@@ -40,6 +45,7 @@ BASE_METRICS: dict[str, MetricDefinition] = {
     },
     "S": {
         "label": "SCOPE",
+        "group": "SCOPE",
         "values": {
             "U": "UNCHANGED",
             "C": "CHANGED",
@@ -47,6 +53,7 @@ BASE_METRICS: dict[str, MetricDefinition] = {
     },
     "C": {
         "label": "CONFIDENTIALITY",
+        "group": "IMPACT",
         "values": {
             "H": "HIGH",
             "L": "LOW",
@@ -55,6 +62,7 @@ BASE_METRICS: dict[str, MetricDefinition] = {
     },
     "I": {
         "label": "INTEGRITY",
+        "group": "IMPACT",
         "values": {
             "H": "HIGH",
             "L": "LOW",
@@ -63,6 +71,7 @@ BASE_METRICS: dict[str, MetricDefinition] = {
     },
     "A": {
         "label": "AVAILABILITY",
+        "group": "IMPACT",
         "values": {
             "H": "HIGH",
             "L": "LOW",
