@@ -67,3 +67,25 @@ def test_cli_accepts_lowercase_and_spaces(monkeypatch: pytest.MonkeyPatch, capsy
     run()
 
     assert "Score: 9.8" in capsys.readouterr().out
+
+
+def test_cli_asks_each_metric_once_in_order(monkeypatch: pytest.MonkeyPatch) -> None:
+    prompts = fake_input(monkeypatch, VALID_ANSWERS)
+
+    run()
+
+    asked = []
+    for prompt in prompts:
+        asked.append(prompt.split(" ")[0])
+
+    assert asked == ["AV", "AC", "PR", "UI", "S", "C", "I", "A"]
+    prompts = fake_input(monkeypatch, VALID_ANSWERS)
+
+    run()
+
+    asked = []
+
+    for prompt in prompts:
+        asked.append(prompt.split(" ")[0])
+
+    assert asked == ["AV", "AC", "PR", "UI", "S", "C", "I", "A"]
