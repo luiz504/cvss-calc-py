@@ -198,3 +198,12 @@ def test_build_vector_rejects_invalid_metrics() -> None:
 # --- the vector has the prefix and every metric ---
 def test_build_vector() -> None:
     assert build_vector(VALID_METRICS) == "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+
+
+# --- the order is the one of the spec, whatever the order of the dict ---
+def test_build_vector_ignores_input_order() -> None:
+    reversed_metrics = {}
+    for metric in reversed(list(VALID_METRICS)):
+        reversed_metrics[metric] = VALID_METRICS[metric]
+
+    assert build_vector(reversed_metrics) == build_vector(VALID_METRICS)
