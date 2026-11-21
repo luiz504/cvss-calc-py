@@ -1,19 +1,17 @@
 # PYT-CVSS
 
-A **CVSS v3.1 base score calculator** in Python, with a terminal mode and a browser UI.
+A **CVSS v3.1 base score calculator** in Python, for the terminal.
 
 Final project for the **Python Scripting** course (PUCPR Cybersecurity postgrad, Turma U).
 
-> **Status:** work in progress. Tooling is set up; the calculator is being built step by step. Items marked _(planned)_ do not work yet.
-
 ## Goal
 
-From the eight CVSS v3.1 base metrics, calculate the **base score** (0.0 to 10.0), the **severity** (None, Low, Medium, High, Critical) and the **vector string**. Both modes share the same scoring code, so they always agree.
+From the eight CVSS v3.1 base metrics, calculate the **base score** (0.0 to 10.0), the **severity** (None, Low, Medium, High, Critical) and the **vector string**. The scoring code is separate from the terminal code.
 
 | Mode | Command | What it is |
 | --- | --- | --- |
-| Terminal _(planned)_ | `python main.py cli` | Interactive prompts, or `--vector` for a one-shot run |
-| Browser _(planned)_ | `python main.py web` | Local web page, standard library only |
+| Interactive | `python main.py cli` | Asks the 8 metrics one by one, repeating a question until the answer is valid |
+| One-shot _(planned)_ | `python main.py cli --vector CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H` | Scores a vector string and exits (code 1 if the vector is invalid) |
 
 Scope: base score only (no temporal or environmental scores). The rules, formulas and reference vectors are in [docs/domain.md](docs/domain.md).
 
@@ -23,16 +21,17 @@ Scope: base score only (no temporal or environmental scores). The rules, formula
 - No runtime dependencies (standard library only)
 - Dev tools, installed by `make install`: `pytest`, `pytest-watcher`, `ruff`
 
-## Running _(planned)_
+## Running
 
 On any OS:
 
 ```bash
 python main.py cli
-python main.py web
 ```
 
-With `make` (Linux/macOS): `make run-cli` (`make run-web` is planned).
+The `--vector` one-shot mode is planned.
+
+With `make` (Linux/macOS): `make run-cli`.
 
 ## Development
 
@@ -50,11 +49,11 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
 
 ## Security notes
 
-- The web mode listens on `127.0.0.1` only, validates every input against an allowlist, and limits request size.
+- Every input is validated against the allowed values before it is used. The program makes no network calls.
 - Tests and examples use fictional data only. Keep this repository **private**.
 
 ## Docs
 
 - [docs/domain.md](docs/domain.md): CVSS definitions, metric weights, formulas, severity bands, reference vectors
-- [docs/design.md](docs/design.md): API of the core, module responsibilities, web contract, build order
+- [docs/design.md](docs/design.md): API of the core, module responsibilities, build order
 - [docs/references.md](docs/references.md): specification, calculators, Python and tooling links

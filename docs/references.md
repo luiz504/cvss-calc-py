@@ -11,9 +11,6 @@
 ## Python
 
 - [`argparse`](https://docs.python.org/3/library/argparse.html): command-line parsing for the terminal mode
-- [`http.server`](https://docs.python.org/3/library/http.server.html): the web server for the browser mode
-- [`webbrowser`](https://docs.python.org/3/library/webbrowser.html): opening the page on start
-- [`json`](https://docs.python.org/3/library/json.html): the API payloads
 
 ## Tooling
 

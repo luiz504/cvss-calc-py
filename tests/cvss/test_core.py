@@ -50,7 +50,7 @@ def test_validate_rejects_unknown_metrics() -> None:
 
 @pytest.mark.parametrize("value", [["N"], None, 1])
 def test_validate_rejects_non_string_value(value: object) -> None:
-    # the web mode can receive JSON values like ["N"], null or 1
+    # values that are not strings, like ["N"], null or 1
     with pytest.raises(CvssError, match="AV must be a string"):
         validate_metrics({**VALID_METRICS, "AV": value})  # type: ignore[arg-type]  # invalid value on purpose
 
