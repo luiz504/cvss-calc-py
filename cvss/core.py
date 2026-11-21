@@ -105,6 +105,9 @@ def severity(score: float) -> None:
     if score < FORMULA.min_score or score > FORMULA.max_score:
         raise CvssError(f"Score must be between {FORMULA.min_score} and {FORMULA.max_score} (got {score})")
 
+    if score >= FORMULA.critical_min:
+        return "Critical"
+
     if score >= FORMULA.high_min:
         return "High"
 
