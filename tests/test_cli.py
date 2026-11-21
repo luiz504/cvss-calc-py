@@ -35,3 +35,11 @@ def test_cli_prints_score(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Captur
     run()
 
     assert "Score: 9.8" in capsys.readouterr().out
+
+
+def test_cli_prints_severity(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    fake_input(monkeypatch, VALID_ANSWERS)
+
+    run()
+
+    assert "Severity: Critical" in capsys.readouterr().out

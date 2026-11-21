@@ -1,5 +1,5 @@
 from cvss.base_metrics import BASE_METRICS
-from cvss.core import base_score
+from cvss.core import base_score, severity
 
 
 def run() -> None:
@@ -24,8 +24,10 @@ def run() -> None:
         metrics[metric] = answer
 
     score = base_score(metrics)
+    _severity = severity(score)
 
     print(f"Score: {score}")
+    print(f"Severity: {_severity}")
 
 
 if __name__ == "__main__":
