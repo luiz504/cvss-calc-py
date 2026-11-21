@@ -253,3 +253,16 @@ def test_parse_vector_returns_the_metrics() -> None:
 def test_parse_vector_rejects_duplicate_metric() -> None:
     with pytest.raises(CvssError, match="Duplicate metric: AV"):
         parse_vector(VALID_VECTOR + "/AV:L")
+
+
+@pytest.mark.parametrize(
+    "vector",
+    [
+        "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H",  # A is missing
+        VALID_VECTOR + "/XX:N",  # unknown metric
+        "CVSS:3.1/AV:Z/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",  # Z is not an AV value
+    ],
+)
+def test_parse_vector_rejects_invalid_metrics(vector: str) -> None:
+    with pytest.raises(CvssError):
+        parse_vector(vector)

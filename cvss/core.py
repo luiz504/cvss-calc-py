@@ -155,4 +155,6 @@ def parse_vector(vector: str) -> dict[str, str]:
 
         metrics[metric] = value
 
+    validate_metrics(metrics)
+
     return metrics
