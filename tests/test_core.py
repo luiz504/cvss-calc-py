@@ -217,6 +217,9 @@ def test_build_vector_ignores_input_order() -> None:
 
 
 # --- parse_vector ---
+VALID_VECTOR = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+
+
 @pytest.mark.parametrize("vector", [None, 42, ["AV:N"], b"CVSS:3.1/AV:N"])
 def test_parse_vector_rejects_non_string(vector: object) -> None:
     with pytest.raises(CvssError):
@@ -241,3 +244,7 @@ def test_parse_vector_rejects_wrong_prefix(vector: str) -> None:
 def test_parse_vector_rejects_malformed_part(vector: str) -> None:
     with pytest.raises(CvssError, match="Invalid vector part"):
         parse_vector(vector)
+
+
+def test_parse_vector_returns_the_metrics() -> None:
+    assert parse_vector(VALID_VECTOR) == VALID_METRICS

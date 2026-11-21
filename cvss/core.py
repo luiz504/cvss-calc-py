@@ -144,9 +144,12 @@ def parse_vector(vector: str) -> dict[str, str]:
     for part in vector.removeprefix(prefix).split("/"):
         pieces = part.split(":")
 
-        print("pieces", pieces)
-
         if len(pieces) != 2:
             raise CvssError(f"Invalid vector part: {part}")
+
+        metric = pieces[0]
+        value = pieces[1]
+
+        metrics[metric] = value
 
     return metrics
