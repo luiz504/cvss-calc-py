@@ -139,4 +139,14 @@ def parse_vector(vector: str) -> dict[str, str]:
     if not vector.startswith(prefix):
         raise CvssError(f'Vector must start with "{prefix}"')
 
-    return {}
+    metrics = {}
+
+    for part in vector.removeprefix(prefix).split("/"):
+        pieces = part.split(":")
+
+        print("pieces", pieces)
+
+        if len(pieces) != 2:
+            raise CvssError(f"Invalid vector part: {part}")
+
+    return metrics

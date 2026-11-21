@@ -235,3 +235,9 @@ def test_parse_vector_rejects_non_string(vector: object) -> None:
 def test_parse_vector_rejects_wrong_prefix(vector: str) -> None:
     with pytest.raises(CvssError, match="must start with"):
         parse_vector(vector)
+
+
+@pytest.mark.parametrize("vector", ["CVSS:3.1/", "CVSS:3.1/AV", "CVSS:3.1/AV:N:X", "CVSS:3.1/AV:N//AC:L"])
+def test_parse_vector_rejects_malformed_part(vector: str) -> None:
+    with pytest.raises(CvssError, match="Invalid vector part"):
+        parse_vector(vector)
