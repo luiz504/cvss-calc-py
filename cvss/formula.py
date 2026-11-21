@@ -17,5 +17,7 @@ class FormulaConstants:
     min_score: int = 0
     max_score: int = 10
 
+    low_min: float = 0.1
+
 
 FORMULA = FormulaConstants()

@@ -167,3 +167,14 @@ def test_severity_rejects_invalid_score(score: object) -> None:
 
 def test_severity_none() -> None:
     assert severity(0.0) == "None"
+
+
+@pytest.mark.parametrize(
+    "score",
+    [
+        0.1,
+        3.9,
+    ],
+)
+def test_severity_low(score: float) -> None:
+    assert severity(score) == "Low"

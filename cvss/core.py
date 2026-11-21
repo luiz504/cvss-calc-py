@@ -98,10 +98,14 @@ def base_score(metrics: dict[str, str]) -> float:
 
 
 def severity(score: float) -> None:
+    print("score", score)
     if isinstance(score, bool) or not isinstance(score, int | float):
         raise CvssError("Score must be a number")
 
     if score < FORMULA.min_score or score > FORMULA.max_score:
         raise CvssError(f"Score must be between {FORMULA.min_score} and {FORMULA.max_score} (got {score})")
+
+    if score >= FORMULA.low_min:
+        return "Low"
 
     return "None"
