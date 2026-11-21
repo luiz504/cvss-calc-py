@@ -59,3 +59,11 @@ def test_cli_prompt_lists_the_options(monkeypatch: pytest.MonkeyPatch) -> None:
     run()
 
     assert prompts[0] == "AV ATTACK_VECTOR (N=NETWORK A=ADJACENT L=LOCAL P=PHYSICAL): "
+
+
+def test_cli_accepts_lowercase_and_spaces(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    fake_input(monkeypatch, [" n", "l ", "n", "n", "u", "h", "h", " h "])
+
+    run()
+
+    assert "Score: 9.8" in capsys.readouterr().out
