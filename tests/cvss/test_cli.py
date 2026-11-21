@@ -127,3 +127,14 @@ def test_cli_vector_prints_the_error_for_an_invalid_vector(capsys: pytest.Captur
 
     assert exit_code == 1
     assert 'Vector must start with "CVSS:3.1/"' in capsys.readouterr().out
+
+
+def test_cli_vector_prints_the_result(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = run_vector("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H")
+
+    output = capsys.readouterr().out
+
+    assert exit_code == 0
+    assert "Score: 9.8" in output
+    assert "Severity: Critical" in output
+    assert "Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H" in output

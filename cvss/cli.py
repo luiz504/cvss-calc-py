@@ -39,9 +39,19 @@ def run() -> None:
 
 def run_vector(vector: str) -> int:
     try:
-        parse_vector(vector)
+        metrics = parse_vector(vector)
     except CvssError as error:
         print(error)
         return 1
-
+    print_result(metrics)
     return 0
+
+
+def print_result(metrics: dict[str, str]) -> None:
+    score = calculate_base_score(metrics)
+    severity = rate_severity(score)
+    vector = build_vector(metrics)
+
+    print(f"Score: {score}")
+    print(f"Severity: {severity}")
+    print(f"Vector: {vector}")
