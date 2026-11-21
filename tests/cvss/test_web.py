@@ -1,3 +1,4 @@
+import json
 import threading
 import urllib
 import urllib.error
@@ -39,3 +40,10 @@ def test_server_binds_to_loopback_only() -> None:
         assert server.server_address[0] == "127.0.0.1"
     finally:
         server.server_close()
+
+
+def test_unknown_get_path_returns_404(base_url: str) -> None:
+    status, _, body = request("GET", base_url + "/nope")
+
+    assert status == 404
+    assert json.loads(body) == {"error": "Not found"}
