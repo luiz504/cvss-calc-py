@@ -270,3 +270,15 @@ def test_parse_vector_rejects_invalid_metrics(vector: str) -> None:
 
 def test_parse_vector_accepts_any_order() -> None:
     assert parse_vector("CVSS:3.1/A:H/I:H/C:H/S:U/UI:N/PR:N/AC:L/AV:N") == VALID_METRICS
+
+
+@pytest.mark.parametrize(
+    "metrics",
+    [
+        VALID_METRICS,
+        {**VALID_METRICS, "S": "C", "PR": "L", "UI": "R"},
+        {"AV": "P", "AC": "H", "PR": "H", "UI": "R", "S": "C", "C": "N", "I": "N", "A": "L"},
+    ],
+)
+def test_parse_vector_is_the_inverse_of_build_vector(metrics: dict[str, str]) -> None:
+    assert parse_vector(build_vector(metrics)) == metrics
