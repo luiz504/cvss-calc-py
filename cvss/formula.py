@@ -14,6 +14,7 @@ class FormulaConstants:
     impact_penalty_exponent: int = 15
 
     scope_changed_multiplier: float = 1.08
+    min_score:int = 0
     max_score: int = 10
 
 

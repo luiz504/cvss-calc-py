@@ -1,6 +1,6 @@
 import pytest
 
-from cvss.core import CvssError, base_score, roundup, subscores, validate
+from cvss.core import CvssError, base_score, roundup, subscores, validate,severity
 
 VALID_METRICS = {"AV": "N", "AC": "L", "PR": "N", "UI": "N", "S": "U", "C": "H", "I": "H", "A": "H"}
 
@@ -154,3 +154,12 @@ def test_base_score_is_zero_without_impact(scope: str) -> None:
 )
 def test_base_score_matches_reference_vector(metrics: dict[str, str], expected: float) -> None:
     assert base_score(metrics) == expected
+
+
+
+# --- severity ---
+
+@pytest.mark.parametrize('score', ["9.8", None, True, -0.1, 10.1])
+def test_severity_rejects_invalid_score(score:object)->None:
+    with pytest.raises(CvssError):
+        severity(score)
