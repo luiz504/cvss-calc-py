@@ -120,3 +120,11 @@ def test_main_rejects_output_inside_a_file(
 
     assert "not a directory" in message
     assert calls == []
+
+
+def test_main_checks_the_output_before_the_one_shot_mode(
+    calls: list[str], tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    fail_with(["-v", "CVSS:3.1/AV:N", "-o", str(tmp_path / "nope" / "score.svg")], capsys)
+
+    assert calls == []
