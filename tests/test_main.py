@@ -66,3 +66,11 @@ def test_main_accepts_the_chart_flag(calls: list[str], flag: str) -> None:
 def test_main_accepts_an_output_path(calls: list[str], tmp_path: Path, flag: str) -> None:
     assert entry.main([flag, str(tmp_path / "score.svg")]) == 0
     assert calls == ["run_interactive"]
+
+
+def test_main_overwrites_an_existing_output_file(calls: list[str], tmp_path: Path) -> None:
+    target = tmp_path / "score.svg"
+    target.write_text("old")
+
+    assert entry.main(["-o", str(target)]) == 0
+    assert calls == ["run_interactive"]
