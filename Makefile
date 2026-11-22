@@ -34,7 +34,7 @@ test: install ## run tests once
 	$(PY) -m pytest
 
 run-cli: install ## run the terminal mode
-	$(PY) main.py cli
+	$(PY) main.py
 
 watch: install ## re-run tests on save
 	$(VENV)/bin/ptw --now --clear --patterns '**/*.py' --ignore-patterns '**/.venv/**' $(CURDIR)
