@@ -129,8 +129,6 @@ def test_cli_interactive_returns_zero(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 # --- run-vector ---
-
-
 def test_cli_vector_prints_the_error_for_an_invalid_vector(capsys: pytest.CaptureFixture[str]) -> None:
     exit_code = run_vector("nope")
 
@@ -199,3 +197,10 @@ def test_save_chart_reports_a_write_error(capsys: pytest.CaptureFixture[str]) ->
     assert "cannot write the chart" in captured.err
     assert "denied" in captured.err
     assert "Chart saved" not in captured.out
+
+
+# --- run-vector with chart ---
+def test_cli_vector_without_chart_flags_writes_nothing(chart_calls: list[ChartCall]) -> None:
+    run_vector(CRITICAL_VECTOR)
+
+    assert chart_calls == []
