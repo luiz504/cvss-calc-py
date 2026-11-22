@@ -17,6 +17,8 @@ def print_result(metrics: dict[str, str]) -> None:
 
 
 def save_chart(metrics: dict[str, str], output: Path | None) -> int:
+    print("Generating chart...")
+
     try:
         path = write_chart(metrics, output)
     except OSError as error:

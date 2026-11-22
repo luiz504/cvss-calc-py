@@ -218,7 +218,7 @@ def test_save_chart_reports_the_saved_path(capsys: pytest.CaptureFixture[str]) -
     exit_code = save_chart(CRITICAL, None)
 
     assert exit_code == 0
-    assert capsys.readouterr().out == "Chart saved: /fake/default.svg\n"
+    assert capsys.readouterr().out == "Generating chart...\nChart saved: /fake/default.svg\n"
 
 
 def test_save_chart_passes_the_metrics_and_output_on(chart_calls: list[ChartCall]) -> None:
@@ -237,6 +237,19 @@ def test_save_chart_reports_a_write_error(capsys: pytest.CaptureFixture[str]) ->
     assert "cannot write the chart" in captured.err
     assert "denied" in captured.err
     assert "Chart saved" not in captured.out
+
+
+@pytest.mark.usefixtures("failing_chart")
+def test_save_chart_announces_the_chart_even_if_the_write_fails(capsys: pytest.CaptureFixture[str]) -> None:
+    save_chart(CRITICAL, Path("out.svg"))
+
+    assert "Generating chart..." in capsys.readouterr().out
+
+
+def test_cli_vector_without_chart_flags_prints_no_chart_message(capsys: pytest.CaptureFixture[str]) -> None:
+    run_vector(CRITICAL_VECTOR)
+
+    assert "Generating chart..." not in capsys.readouterr().out
 
 
 # --- run-vector with chart ---
