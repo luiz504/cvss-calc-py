@@ -35,6 +35,8 @@ class ChartConstants:
     name_size: int = 13
     name_offset_y: int = 22
     plot_height: int = 200
+    value_size: int = 13
+    value_offset_y: int = 8
 
 
 CHART = ChartConstants()
@@ -80,6 +82,10 @@ def build_svg(metrics: dict[str, str]) -> str:
         color = color_for_score(shown)
 
         lines.append(f'<rect class="bar" x="{x}" y="{y}" width="{CHART.bar_width}" height="{height}" fill="{color}"/>')
+        lines.append(
+            f'<text class="value" x="{center}" y="{y - CHART.value_offset_y}" '
+            f'font-size="{CHART.value_size}" fill="{COLORS.text}" text-anchor="middle">{shown:.1f}</text>'
+        )
         lines.append(
             f'<text class="name" x="{center}" y="{CHART.baseline_y + CHART.name_offset_y}" '
             f'font-size="{CHART.name_size}" fill="{COLORS.text}" text-anchor="middle">{name}</text>'

@@ -103,3 +103,9 @@ def test_build_svg_colors_a_high_score_orange() -> None:
     bars = find_all(build_svg(high), "bar")
 
     assert [bar.get("fill") for bar in bars] == [COLORS.high, COLORS.low, COLORS.low]
+
+
+def test_build_svg_labels_bars_with_one_decimal() -> None:
+    values = find_all(build_svg(CRITICAL), "value")
+
+    assert [value.text for value in values] == ["9.8", "5.9", "3.9"]
