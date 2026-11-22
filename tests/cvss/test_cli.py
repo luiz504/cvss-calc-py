@@ -228,3 +228,8 @@ def test_cli_vector_prints_the_result_even_if_the_chart_fails(capsys: pytest.Cap
 
     assert exit_code == 1
     assert "Score: 9.8" in capsys.readouterr().out
+
+
+def test_cli_vector_invalid_vector_writes_no_chart(chart_calls: list[ChartCall]) -> None:
+    assert run_vector("nope", chart=True) == 1
+    assert chart_calls == []
