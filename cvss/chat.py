@@ -15,6 +15,21 @@ class ChartColors:
 COLORS = ChartColors()
 
 
+@dataclass(frozen=True)
+class ChartConstants:
+    width: int = 400
+    height: int = 320
+    title_x: int = 200
+    title_y: int = 32
+    title_size: int = 18
+    vector_x: int = 200
+    vector_y: int = 296
+    vector_size: int = 11
+
+
+CHART = ChartConstants()
+
+
 def color_for_score(score: float) -> str:
     if score >= FORMULA.critical_min:
         return COLORS.critical
@@ -30,4 +45,12 @@ def color_for_score(score: float) -> str:
 
 def build_svg(metrics: dict[str, str]) -> str:
     validate_metrics(metrics)
-    return "NOT_IMPLEMENTED"
+
+    lines = []
+    lines.append(
+        '<svg xmlns="http://www.w3.org/2000/svg" '
+        f'width="{CHART.width}" height="{CHART.height}" font-family="sans-serif">'
+    )
+    lines.append("</svg>")
+
+    return "\n".join(lines)
