@@ -6,6 +6,9 @@ from cvss.cli import run_interactive, run_vector, save_chart
 from cvss.core import parse_vector
 
 VALID_ANSWERS = ["N", "L", "N", "N", "U", "H", "H", "H"]  # AV AC PR UI S C I A -> 9.8 Critical
+CRITICAL_VECTOR = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+CRITICAL = parse_vector(CRITICAL_VECTOR)
+ChartCall = tuple[dict[str, str], Path | None]
 
 
 def fake_input(monkeypatch: pytest.MonkeyPatch, answers: list[str]) -> list[str]:
@@ -128,6 +131,14 @@ def test_cli_interactive_returns_zero(monkeypatch: pytest.MonkeyPatch) -> None:
     assert run_interactive() == 0
 
 
+def test_cli_without_chart_flags_writes_nothing(monkeypatch: pytest.MonkeyPatch, chart_calls: list[ChartCall]) -> None:
+    fake_input(monkeypatch, VALID_ANSWERS)
+
+    run_interactive()
+
+    assert chart_calls == []
+
+
 # --- run-vector ---
 def test_cli_vector_prints_the_error_for_an_invalid_vector(capsys: pytest.CaptureFixture[str]) -> None:
     exit_code = run_vector("nope")
@@ -148,9 +159,6 @@ def test_cli_vector_prints_the_result(capsys: pytest.CaptureFixture[str]) -> Non
 
 
 # --- save-chart ---
-CRITICAL_VECTOR = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
-CRITICAL = parse_vector(CRITICAL_VECTOR)
-ChartCall = tuple[dict[str, str], Path | None]
 
 
 @pytest.fixture
