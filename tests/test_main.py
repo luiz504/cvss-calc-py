@@ -1,8 +1,11 @@
+import os
 from pathlib import Path
 
 import pytest
 
 import main as entry
+
+NEEDS_NON_ROOT = pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file permissions")
 
 
 @pytest.fixture
@@ -127,4 +130,21 @@ def test_main_checks_the_output_before_the_one_shot_mode(
 ) -> None:
     fail_with(["-v", "CVSS:3.1/AV:N", "-o", str(tmp_path / "nope" / "score.svg")], capsys)
 
+    assert calls == []
+
+
+@NEEDS_NON_ROOT
+def test_main_rejects_output_in_a_read_only_folder(
+    calls: list[str], tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    folder = tmp_path / "locked"
+    folder.mkdir()
+    folder.chmod(0o500)
+
+    try:
+        message = fail_with(["-o", str(folder / "score.svg")], capsys)
+    finally:
+        folder.chmod(0o700)
+
+    assert "permission denied" in message
     assert calls == []

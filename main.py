@@ -1,4 +1,5 @@
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -37,6 +38,9 @@ def find_output_problem(output: str) -> str | None:
 
     if not folder.is_dir():
         return f"{folder} is not a directory"
+
+    if not os.access(folder, os.W_OK | os.X_OK):
+        return f"permission denied: cannot write in {folder}"
 
     return None
 
