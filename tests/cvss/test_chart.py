@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
-from cvss.chart import COLORS, build_svg, color_for_score
+from cvss.chart import CHART, COLORS, build_svg, color_for_score
 from cvss.core import CvssError, build_vector, parse_vector
 
 SVG_NS = "{http://www.w3.org/2000/svg}"
@@ -83,3 +83,10 @@ def test_build_svg_scales_bar_height_by_value() -> None:
 
     # 9.8, 5.9 and 3.9 out of 10, on a 200 px plot
     assert [number(bar, "height") for bar in bars] == [196, 118, 78]
+
+
+def test_build_svg_sits_every_bar_on_the_baseline() -> None:
+    bars = find_all(build_svg(CRITICAL), "bar")
+
+    for bar in bars:
+        assert number(bar, "y") + number(bar, "height") == CHART.baseline_y

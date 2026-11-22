@@ -77,7 +77,9 @@ def build_svg(metrics: dict[str, str]) -> str:
         shown = round(value, 1)
         height = round(shown / FORMULA.max_score * CHART.plot_height)
 
-        lines.append(f'<rect class="bar" x="{x}" y="{CHART.baseline_y}" width="{CHART.bar_width}" height="{height}"/>')
+        y = CHART.baseline_y - height
+
+        lines.append(f'<rect class="bar" x="{x}" y="{y}" width="{CHART.bar_width}" height="{height}"/>')
         lines.append(
             f'<text class="name" x="{center}" y="{CHART.baseline_y + CHART.name_offset_y}" '
             f'font-size="{CHART.name_size}" fill="{COLORS.text}" text-anchor="middle">{name}</text>'
