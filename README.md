@@ -6,21 +6,30 @@ Final project for the **Python Scripting** course (PUCPR Cybersecurity postgrad,
 
 ## Install
 
-The project is built into **one installer file**. Running it installs the `cvss` command and its man page for the current user: no `make`, no `sudo`, no network, no source folder.
+The project is built into **one installer file** for Linux. Running it installs the `cvss` command and its man page for the current user: no `sudo`, no network, no source folder.
+
+**Standalone (recommended): no dependencies on the machine that installs it.** The installer carries a ready-to-run `cvss` program, so the target needs neither Python nor `venv`, only `sh` and `tar`.
 
 ```bash
-./build.sh                                  # once, on the machine that has the source: writes dist/cvss-1.1.0-installer.sh
-sh dist/cvss-1.1.0-installer.sh             # on any machine: install (run it again to upgrade)
+./build-binary.sh                                          # once, where the source is: writes dist/cvss-<version>-linux-x86_64-installer.sh
+sh dist/cvss-<version>-linux-x86_64-installer.sh           # on any x86_64 Linux: install (run it again to upgrade)
 cvss --help
 man cvss
-sh dist/cvss-1.1.0-installer.sh --uninstall # remove everything it installed
+sh dist/cvss-<version>-linux-x86_64-installer.sh --uninstall   # remove everything it installed
 ```
 
-Copy the installer file anywhere (a VM, a USB stick) and run it there. It checks its own checksum, creates a private virtual environment in `~/.local/share/cvss`, installs the program into it, and links the command into `~/.local/bin` and the man page into `~/.local/share/man`. If `cvss` is not found afterwards, add `~/.local/bin` to your `PATH`; the installer tells you when that is needed.
+- **To install:** an x86_64 Linux with `sh` and `tar` (every distribution has them), and a glibc at least as new as the machine that built it. Build on the oldest Linux you want to support.
+- **To build:** `python3` with the `venv` module (Debian/Ubuntu: `sudo apt install python3 python3-venv`) and network access once (the build downloads PyInstaller into a throwaway virtual environment). `make build-binary` does the same.
+- The installer checks its own SHA-256, refuses another CPU type, and never overwrites a `cvss` it did not install. It puts the program in `~/.local/share/cvss` and links it into `~/.local/bin` and the man page into `~/.local/share/man`. If `cvss` is not found afterwards, add `~/.local/bin` to your `PATH`; the installer tells you when that is needed.
 
-- **To install:** Python 3.12 or newer with the `venv` module (Debian/Ubuntu: `sudo apt install python3 python3-venv`). Nothing is downloaded.
-- **To build:** `python3` with the `venv` module (Debian/Ubuntu: `sudo apt install python3 python3-venv`) and network access once: the build runs in a throwaway virtual environment whose pip fetches the build tool, `setuptools`. A bare system without `python3-pip` is fine. `make build` does the same as `./build.sh`.
-- The program itself has no runtime dependencies (standard library only).
+**With Python instead** (smaller, readable, any OS with Python 3.12+ and the `venv` module):
+
+```bash
+./build.sh                                  # writes dist/cvss-<version>-installer.sh (needs python3-venv and the network once)
+sh dist/cvss-<version>-installer.sh         # installs it into a private virtual environment; --uninstall removes it
+```
+
+Only one of the two installers can be installed at a time: each refuses to replace the other's `cvss`, so uninstall the first one before using the second. The program itself has no runtime dependencies (standard library only).
 
 ## Usage
 
@@ -93,7 +102,7 @@ On Linux there is no bare `python` command: use `python3`, or run `source .venv/
 | command-line arguments | `argparse` in `cvss/app.py` (`-v`, `-c`, `-o`, `-h`) |
 | files and paths | `pathlib.Path`, `tempfile`, `write_chart` and the early check of the `-o` path (`find_output_problem`) |
 | dataclasses | frozen `FormulaConstants`, `ChartColors` and `ChartConstants` hold every named constant |
-| packaging | `pyproject.toml` (console script `cvss`), built into a wheel and a one-file installer |
+| packaging | `pyproject.toml` (console script `cvss`), built into a wheel and into one-file installers (a standalone program, or a wheel) |
 | external modules | `argparse`, `sys`, `pathlib`, `tempfile`; `pytest` and `ruff` as dev tools |
 
 ## Development
@@ -117,7 +126,7 @@ Commits follow [Conventional Commits](https://www.conventionalcommits.org/).
 - Every input is validated against the allowed values before it is used. The program makes no network calls.
 - Only validated metric letters reach the SVG text, so nothing typed by the user is written into the file unescaped.
 - The `-o` path is checked before anything runs (missing folder, a directory, no permission), and a write error is reported instead of crashing. The default chart goes to the system temp folder, never into the project.
-- The installer works only inside your home folder, never uses `sudo`, refuses to overwrite a `cvss` file it did not install, and checks the SHA-256 of the program it carries (that detects a damaged copy; the file is not signed).
+- The installers work only inside your home folder, never use `sudo`, refuse to overwrite a `cvss` file they did not install, and check the SHA-256 of the program they carry (that detects a damaged copy; the files are not signed). The standalone program is built from this source, so read the source rather than the binary.
 - Tests and examples use fictional data only. Keep this repository **private**.
 
 ## Docs

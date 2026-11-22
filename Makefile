@@ -1,7 +1,7 @@
 VENV := .venv
 PY   := $(VENV)/bin/python
 
-.PHONY: help install run-cli test watch lint lint-fix format format-check check build clean
+.PHONY: help install run-cli test watch lint lint-fix format format-check check build build-binary clean
 .DEFAULT_GOAL := help
 
 help: ## list commands
@@ -43,3 +43,6 @@ check: lint format-check test ## pre-commit gate: lint + format check + tests
 
 build: ## build the one-file installer in dist/ (same as ./build.sh)
 	./build.sh
+
+build-binary: ## build the standalone installer, no Python needed to install it (same as ./build-binary.sh)
+	./build-binary.sh
