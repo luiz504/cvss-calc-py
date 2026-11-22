@@ -166,3 +166,12 @@ def test_write_chart_defaults_to_the_temp_folder(temp_folder: Path) -> None:
 
     assert result == temp_folder / "cvss-calc" / "cvss-score.svg"
     assert result.read_text(encoding="utf-8") == build_svg(CRITICAL)
+
+
+def test_write_chart_default_overwrites_the_previous_run(temp_folder: Path) -> None:
+    other = parse_vector("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L")
+    write_chart(CRITICAL)
+
+    result = write_chart(other)
+
+    assert result.read_text(encoding="utf-8") == build_svg(other)
