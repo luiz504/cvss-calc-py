@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from cvss.formula import FORMULA
+
 
 @dataclass(frozen=True)
 class ChartColors:
@@ -13,4 +15,7 @@ COLORS = ChartColors()
 
 
 def color_for_score(score: float) -> str:
+    if score >= FORMULA.medium_min:
+        return COLORS.medium
+
     return COLORS.low
