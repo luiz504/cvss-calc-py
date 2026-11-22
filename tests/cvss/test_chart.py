@@ -131,3 +131,12 @@ def test_write_chart_writes_the_svg_to_the_given_path(tmp_path: Path) -> None:
 
     assert result == target
     assert target.read_text(encoding="utf-8") == build_svg(CRITICAL)
+
+
+def test_write_chart_overwrites_an_existing_file(tmp_path: Path) -> None:
+    target = tmp_path / "score.svg"
+    target.write_text("old", encoding="utf-8")
+
+    write_chart(CRITICAL, target)
+
+    assert target.read_text(encoding="utf-8") == build_svg(CRITICAL)
