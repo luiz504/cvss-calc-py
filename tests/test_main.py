@@ -82,3 +82,20 @@ def test_main_accepts_a_bare_file_name_in_the_current_folder(
     monkeypatch.chdir(tmp_path)
 
     assert entry.main(["-o", "score.svg"]) == 0
+
+
+def fail_with(argv: list[str], capsys: pytest.CaptureFixture[str]) -> str:
+    with pytest.raises(SystemExit) as stop:
+        entry.main(argv)
+
+    assert stop.value.code == 2
+    return capsys.readouterr().err
+
+
+def test_main_rejects_output_in_a_missing_folder(
+    calls: list[str], tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    message = fail_with(["-o", str(tmp_path / "nope" / "score.svg")], capsys)
+
+    assert "does not exist" in message
+    assert calls == []

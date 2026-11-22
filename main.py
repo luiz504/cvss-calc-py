@@ -1,5 +1,6 @@
 import argparse
 import sys
+from pathlib import Path
 
 from cvss.cli import run_interactive, run_vector
 
@@ -17,10 +18,25 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def find_output_problem(output: str) -> str | None:
+    path = Path(output)
+    folder = path.parent
+
+    if not folder.exists():
+        return f"directory {folder} does not exist"
+
+    return None
+
+
 def main(argv: list[str]) -> int:
     parser = build_parser()
-
     args = parser.parse_args(argv)
+
+    if args.output is not None:
+        problem = find_output_problem(args.output)
+        if problem is not None:
+            parser.error(problem)
+
     if args.vector is not None:
         return run_vector(args.vector)
 
