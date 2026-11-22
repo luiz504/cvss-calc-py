@@ -58,11 +58,20 @@ def run_interactive() -> int:
     return 0
 
 
-def run_vector(vector: str) -> int:
+def finish_run(metrics: dict[str, str], chart: bool, output: Path | None) -> int:
+    print_result(metrics)
+
+    if chart or output is not None:
+        return save_chart(metrics, output)
+
+    return 0
+
+
+def run_vector(vector: str, chart: bool = False, output: Path | None = None) -> int:
     try:
         metrics = parse_vector(vector)
     except CvssError as error:
         print(error)
         return 1
-    print_result(metrics)
-    return 0
+
+    return finish_run(metrics, chart, output)

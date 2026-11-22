@@ -204,3 +204,13 @@ def test_cli_vector_without_chart_flags_writes_nothing(chart_calls: list[ChartCa
     run_vector(CRITICAL_VECTOR)
 
     assert chart_calls == []
+
+
+def test_cli_vector_chart_flag_saves_to_the_default(
+    chart_calls: list[ChartCall], capsys: pytest.CaptureFixture[str]
+) -> None:
+    exit_code = run_vector(CRITICAL_VECTOR, chart=True)
+
+    assert exit_code == 0
+    assert chart_calls == [(CRITICAL, None)]
+    assert "Chart saved: /fake/default.svg" in capsys.readouterr().out
