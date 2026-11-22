@@ -1,10 +1,12 @@
 import os
+import tempfile
 from pathlib import Path
 
 import pytest
 
 import main as entry
 
+CRITICAL_VECTOR = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
 NEEDS_NON_ROOT = pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file permissions")
 
 
@@ -219,3 +221,37 @@ def test_main_passes_the_output_path_to_the_one_shot_mode(
     entry.main(["-v", "CVSS:3.1/AV:N", "-o", str(tmp_path / "score.svg")])
 
     assert mode_args == [("CVSS:3.1/AV:N", False, tmp_path / "score.svg")]
+
+
+# --- end to end: real modes, real files ---
+
+
+def test_main_writes_the_chart_to_the_output_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    target = tmp_path / "score.svg"
+
+    exit_code = entry.main(["-v", CRITICAL_VECTOR, "-o", str(target)])
+
+    assert exit_code == 0
+    assert f"Chart saved: {target}" in capsys.readouterr().out
+    assert target.read_text(encoding="utf-8").startswith("<svg")
+
+
+def test_main_chart_flag_writes_to_the_temp_folder(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(tmp_path))
+    expected = tmp_path / "cvss-calc" / "cvss-score.svg"
+
+    exit_code = entry.main(["-v", CRITICAL_VECTOR, "-c"])
+
+    assert exit_code == 0
+    assert f"Chart saved: {expected}" in capsys.readouterr().out
+    assert expected.exists()
+
+
+def test_main_without_chart_flags_writes_no_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(tmp_path))
+
+    entry.main(["-v", CRITICAL_VECTOR])
+
+    assert not (tmp_path / "cvss-calc").exists()
