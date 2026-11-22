@@ -74,3 +74,11 @@ def test_main_overwrites_an_existing_output_file(calls: list[str], tmp_path: Pat
 
     assert entry.main(["-o", str(target)]) == 0
     assert calls == ["run_interactive"]
+
+
+def test_main_accepts_a_bare_file_name_in_the_current_folder(
+    calls: list[str], tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.chdir(tmp_path)
+
+    assert entry.main(["-o", "score.svg"]) == 0
