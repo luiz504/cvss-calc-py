@@ -1,6 +1,9 @@
 import pytest
 
-from cvss.chat import COLORS, color_for_score
+from cvss.chat import COLORS, build_svg, color_for_score
+from cvss.core import CvssError
+
+SVG_NS = "{http://www.w3.org/2000/svg}"
 
 
 @pytest.mark.parametrize(
@@ -18,3 +21,8 @@ from cvss.chat import COLORS, color_for_score
 )
 def test_color_for_score_follows_the_severity_bands(score: float, color: str) -> None:
     assert color_for_score(score) == color
+
+
+def test_build_svg_rejects_invalid_metrics() -> None:
+    with pytest.raises(CvssError):
+        build_svg({})

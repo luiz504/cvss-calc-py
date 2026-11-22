@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from cvss.core import validate_metrics
 from cvss.formula import FORMULA
 
 
@@ -25,3 +26,8 @@ def color_for_score(score: float) -> str:
         return COLORS.medium
 
     return COLORS.low
+
+
+def build_svg(metrics: dict[str, str]) -> str:
+    validate_metrics(metrics)
+    return "NOT_IMPLEMENTED"
