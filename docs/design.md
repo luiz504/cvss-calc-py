@@ -10,6 +10,9 @@ Decisions for how the code is organised. The rules being implemented are in [dom
 - English only, no translations in v1. Metrics and values are stored under stable uppercase keys (e.g. `ATTACK_VECTOR`, `NETWORK`), which the CLI shows as they are.
 - Definitions and weights are separate tables: `BASE_METRICS` says which metrics and letters exist, `BASE_METRICS_WEIGHTS` holds the scoring numbers.
 - The CLI contains **no scoring rules**. It calls `core`.
+- The chart is plain SVG text built with the standard library (no plotting dependency). Building the text and writing the file are two separate functions.
+- Command line like a Linux tool: no subcommand, interactive by default, `-v/--vector`, `-c/--chart`, `-o/--output FILE` (short and long forms), `argparse` for parsing and `--help`.
+- Fail early: an unusable `-o` path is rejected before any prompt or score. Errors go to stderr, the exit code says what happened.
 
 ## `cvss/core.py` (pure: no I/O, no printing)
 
@@ -29,6 +32,21 @@ build_vector(metrics) -> str             # "CVSS:3.1/AV:N/..."
 - One error type: `CvssError(ValueError)`. Messages name the metric and the allowed values, e.g. `AV must be one of N, A, L, P (got "X")`. The CLI prints the message, so the wording lives in one place.
 - The CLI prompts are generated from `BASE_METRICS`.
 
+## `cvss/chart.py` (the SVG: text first, file second)
+
+```text
+COLORS, CHART                            # frozen dataclasses: band colors, sizes, offsets, default file name
+color_for_score(score) -> str            # one color per severity band, limits come from FORMULA
+build_svg(metrics) -> str                # pure: validates, then returns the SVG text
+default_chart_path() -> Path             # <system temp folder>/cvss-calc/cvss-score.svg
+write_chart(metrics, path=None) -> Path  # builds the text first, then writes it; OSError propagates
+```
+
+- Three bars, **Base**, **Impact**, **Exploitability**, on a 0 to 10 scale. The value is rounded once to one decimal and that single number drives the bar height, the color and the label.
+- A negative raw impact (scope changed, no C/I/A impact) is shown as 0.
+- `write_chart` creates only the default temp folder. An explicit path is written exactly where it points, so a missing folder is an error, never silently created.
+- Invalid metrics raise `CvssError` before anything touches the disk.
+
 ## Modules
 
 | Module | Responsibility |
@@ -36,8 +54,17 @@ build_vector(metrics) -> str             # "CVSS:3.1/AV:N/..."
 | `formula.py` | named constants: formula numbers, severity limits, vector prefix |
 | `base_metrics.py` | metric definitions and weights |
 | `core.py` | scoring rules, validation, severity, vector build |
-| `cli.py` | prompts, loops until each answer is valid, printing; `--vector` flag |
-| `main.py` | entry point: `cli` |
+| `chart.py` | band colors, SVG text, writing the file |
+| `cli.py` | prompts, loops until each answer is valid, printing; `finish_run` (result, then chart if requested) and `save_chart` (writes the chart, reports the path or the `OSError`) |
+| `main.py` | entry point: `argparse` flags, early check of the `-o` path, hands off to the interactive or one-shot mode |
+
+## Exit codes
+
+| Code | When |
+| --- | --- |
+| 0 | done |
+| 1 | invalid vector, or the chart could not be written (the score is still printed first) |
+| 2 | usage error, or an unusable `-o` path |
 
 ## Build order (one commit per step)
 
@@ -47,5 +74,9 @@ build_vector(metrics) -> str             # "CVSS:3.1/AV:N/..."
 4. severity
 5. vector parse and build
 6. CLI (interactive, then `--vector`)
+7. `argparse` command line: `-v`, `-c`, `-o`, with the early `-o` path check
+8. `build_svg`: title, bars, heights, colors, labels, negative impact as 0
+9. `write_chart`: given path, temp folder by default, write errors
+10. wiring: `save_chart` and `finish_run`, flags passed from `main`, end-to-end tests
 
-The test list for each step comes from the domain sections, see `tests/cvss/test_core.py`.
+The test list for each step comes from the domain sections, see `tests/cvss/test_core.py`, and the chart and CLI tests next to it.
