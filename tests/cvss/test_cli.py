@@ -181,3 +181,9 @@ def test_save_chart_reports_the_saved_path(capsys: pytest.CaptureFixture[str]) -
 
     assert exit_code == 0
     assert capsys.readouterr().out == "Chart saved: /fake/default.svg\n"
+
+
+def test_save_chart_passes_the_metrics_and_output_on(chart_calls: list[ChartCall]) -> None:
+    save_chart(CRITICAL, Path("out.svg"))
+
+    assert chart_calls == [(CRITICAL, Path("out.svg"))]
