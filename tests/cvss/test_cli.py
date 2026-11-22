@@ -119,6 +119,12 @@ def test_cli_prompts_show_step_and_group_in_order(monkeypatch: pytest.MonkeyPatc
         assert prompts[index].startswith(expected_start)
 
 
+def test_cli_interactive_returns_zero(monkeypatch: pytest.MonkeyPatch) -> None:
+    fake_input(monkeypatch, VALID_ANSWERS)
+
+    assert run_interactive() == 0
+
+
 # --- run-vector ---
 
 
