@@ -227,8 +227,6 @@ def test_main_passes_the_output_path_to_the_one_shot_mode(
 
 
 # --- end to end: real modes, real files ---
-
-
 def test_main_writes_the_chart_to_the_output_file(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     target = tmp_path / "score.svg"
 
@@ -261,8 +259,6 @@ def test_main_without_chart_flags_writes_no_file(tmp_path: Path, monkeypatch: py
 
 
 # --- the entry points ---
-
-
 def test_run_reads_the_command_line_from_sys_argv(calls: list[str], monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(sys, "argv", ["cvss", "-v", "CVSS:3.1/AV:N"])
 
@@ -277,3 +273,19 @@ def test_main_py_still_runs_from_the_project_folder() -> None:
 
     assert result.returncode == 0
     assert "Score: 9.8" in result.stdout
+
+
+# --- colors ---
+
+
+@pytest.mark.usefixtures("colored")
+def test_the_result_is_colored_by_default(capsys: pytest.CaptureFixture[str]) -> None:
+    entry.main(["-v", CRITICAL_VECTOR])
+
+    assert "\033[1;97;41m9.8\033[0m" in capsys.readouterr().out
+
+
+def test_no_color_turns_the_colors_off(capsys: pytest.CaptureFixture[str]) -> None:
+    entry.main(["-v", CRITICAL_VECTOR])
+
+    assert "\033" not in capsys.readouterr().out

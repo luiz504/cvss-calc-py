@@ -77,6 +77,12 @@ Chart saved: /tmp/cvss.svg
 
 If the file cannot be written, the score is still shown, the error goes to stderr (`cvss: error: cannot write the chart: ...`) and the exit code is 1.
 
+## Color
+
+The output is always colored, to keep it easy to read: the labels are bold and the severity follows the same bands as the chart, **Low** green, **Medium** yellow, **High** red, **Critical** white on red (and **None** dim). Wrong answers and errors are red, the step in each prompt is dim, and `Chart saved:` is green.
+
+There is no option for it. Colors stay on even when the output is piped, so use `less -R` to read colored output in a pager. Two standard cases switch them off by themselves: a non-empty `NO_COLOR` environment variable ([no-color.org](https://no-color.org)), for example `NO_COLOR=1 cvss -v ... | grep Score`, and `TERM=dumb`.
+
 ## Running from the source folder
 
 Without installing, from this folder:
@@ -101,6 +107,7 @@ On Linux there is no bare `python` command: use `python3`, or run `source .venv/
 | functions | one small function per rule in `core.py`, `cli.py` and `chart.py` |
 | command-line arguments | `argparse` in `cvss/app.py` (`-v`, `-c`, `-o`, `-h`) |
 | files and paths | `pathlib.Path`, `tempfile`, `write_chart` and the early check of the `-o` path (`find_output_problem`) |
+| environment variables | `colors.py`: `os.environ` (`NO_COLOR`, `TERM`) and ANSI escape codes |
 | dataclasses | frozen `FormulaConstants`, `ChartColors` and `ChartConstants` hold every named constant |
 | packaging | `pyproject.toml` (console script `cvss`), built into a wheel and into one-file installers (a standalone program, or a wheel) |
 | external modules | `argparse`, `sys`, `pathlib`, `tempfile`; `pytest` and `ruff` as dev tools |

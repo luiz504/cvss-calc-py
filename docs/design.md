@@ -12,6 +12,7 @@ Decisions for how the code is organised. The rules being implemented are in [dom
 - The CLI contains **no scoring rules**. It calls `core`.
 - The chart is plain SVG text built with the standard library (no plotting dependency). Building the text and writing the file are two separate functions.
 - Command line like a Linux tool: no subcommand, interactive by default, `-v/--vector`, `-c/--chart`, `-o/--output FILE` (short and long forms), `argparse` for parsing and `--help`.
+- Colors are plain ANSI codes in one small module (`colors.py`), no dependency, no option and no global state: always on, even into a pipe, because easy reading came first. Only the two standard opt-outs apply, a non-empty `NO_COLOR` and `TERM=dumb`, read from the environment on each call. Prompts are colored safely because `input()` is plain (no `readline` import). Tests start with `NO_COLOR` set (an autouse fixture), so output assertions see plain text; color tests use a `colored` fixture.
 - Fail early: an unusable `-o` path is rejected before any prompt or score. Errors go to stderr, the exit code says what happened.
 
 ## `cvss/core.py` (pure: no I/O, no printing)
@@ -55,6 +56,7 @@ write_chart(metrics, path=None) -> Path  # builds the text first, then writes it
 | `base_metrics.py` | metric definitions and weights |
 | `core.py` | scoring rules, validation, severity, vector build |
 | `chart.py` | band colors, SVG text, writing the file |
+| `colors.py` | ANSI colors: `enabled()` and `paint(text, style)`; the severity colors live in `cli.py` |
 | `cli.py` | prompts, loops until each answer is valid, printing; `finish_run` (result, then chart if requested) and `save_chart` (writes the chart, reports the path or the `OSError`) |
 | `app.py` | the command line: `argparse` flags, early check of the `-o` path, `run()` (the console-script entry point), hands off to the interactive or one-shot mode |
 | `main.py` (project root) | 4-line shim so `python main.py` still works from the source folder |

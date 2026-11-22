@@ -60,6 +60,17 @@ The vector is invalid, or the chart could not be written. The score is still pri
 Usage error, or an unusable
 .B \-\-output
 path (missing folder, a directory, no permission).
+.SH ENVIRONMENT
+The output is colored: bold labels, a severity color (green for Low, yellow for Medium, red for High, white on red for
+Critical), and red errors. It is colored even when piped, to keep it easy to read, except in these cases:
+.TP
+.B NO_COLOR
+When set and not empty, no color is used. See https://no-color.org.
+.TP
+.B TERM
+When set to
+.BR dumb ,
+no color is used.
 .SH FILES
 .TP
 .I <temporary folder>/cvss-calc/cvss-score.svg

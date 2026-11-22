@@ -286,3 +286,80 @@ def test_cli_vector_prints_the_result_even_if_the_chart_fails(capsys: pytest.Cap
 def test_cli_vector_invalid_vector_writes_no_chart(chart_calls: list[ChartCall]) -> None:
     assert run_vector("nope", chart=True) == 1
     assert chart_calls == []
+
+
+# --- colors ---
+
+NO_IMPACT_VECTOR = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:N"  # 0.0 None
+
+
+@pytest.mark.usefixtures("colored")
+def test_result_labels_are_bold_and_a_critical_score_is_white_on_red(capsys: pytest.CaptureFixture[str]) -> None:
+    run_vector(CRITICAL_VECTOR)
+
+    output = capsys.readouterr().out
+    assert "\033[1mScore:\033[0m \033[1;97;41m9.8\033[0m" in output
+    assert "\033[1mSeverity:\033[0m \033[1;97;41mCritical\033[0m" in output
+    assert f"\033[1mVector:\033[0m {CRITICAL_VECTOR}" in output
+
+
+@pytest.mark.usefixtures("colored")
+@pytest.mark.parametrize(
+    ("vector", "severity", "code"),
+    [
+        ("CVSS:3.1/AV:P/AC:H/PR:H/UI:R/S:U/C:L/I:N/A:N", "Low", "32"),
+        ("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N", "Medium", "33"),
+        ("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L", "High", "31"),
+        (NO_IMPACT_VECTOR, "None", "2"),
+    ],
+)
+def test_severity_has_its_own_color(capsys: pytest.CaptureFixture[str], vector: str, severity: str, code: str) -> None:
+    run_vector(vector)
+
+    assert f"\033[{code}m{severity}\033[0m" in capsys.readouterr().out
+
+
+@pytest.mark.usefixtures("colored")
+def test_an_invalid_vector_is_printed_in_red(capsys: pytest.CaptureFixture[str]) -> None:
+    run_vector("nope")
+
+    assert capsys.readouterr().out.startswith("\033[31mVector must start with")
+
+
+@pytest.mark.usefixtures("colored")
+def test_prompts_dim_the_step_and_bold_the_metric(monkeypatch: pytest.MonkeyPatch) -> None:
+    prompts = fake_input(monkeypatch, VALID_ANSWERS)
+
+    run_interactive()
+
+    assert prompts[0].startswith("\033[2m[1/8 EXPLOITABILITY]\033[0m \033[1mAV\033[0m ATTACK_VECTOR")
+
+
+@pytest.mark.usefixtures("colored")
+def test_a_wrong_answer_is_reported_in_red(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    fake_input(monkeypatch, ["X", *VALID_ANSWERS])
+
+    run_interactive()
+
+    assert '\033[31mAV must be one of N, A, L, P (got "X")\033[0m' in capsys.readouterr().out
+
+
+@pytest.mark.usefixtures("colored", "chart_calls")
+def test_chart_messages_are_colored(capsys: pytest.CaptureFixture[str]) -> None:
+    save_chart(CRITICAL, None)
+
+    expected = "\033[2mGenerating chart...\033[0m\n\033[32mChart saved:\033[0m /fake/default.svg\n"
+    assert capsys.readouterr().out == expected
+
+
+@pytest.mark.usefixtures("colored", "failing_chart")
+def test_a_chart_error_label_is_red_on_stderr(capsys: pytest.CaptureFixture[str]) -> None:
+    save_chart(CRITICAL, Path("out.svg"))
+
+    assert capsys.readouterr().err.startswith("\033[31mcvss: error:\033[0m cannot write the chart")
+
+
+def test_no_color_leaves_the_result_plain(capsys: pytest.CaptureFixture[str]) -> None:
+    run_vector(CRITICAL_VECTOR)
+
+    assert "\033" not in capsys.readouterr().out
