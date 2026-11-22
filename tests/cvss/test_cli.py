@@ -214,3 +214,9 @@ def test_cli_vector_chart_flag_saves_to_the_default(
     assert exit_code == 0
     assert chart_calls == [(CRITICAL, None)]
     assert "Chart saved: /fake/default.svg" in capsys.readouterr().out
+
+
+def test_cli_vector_output_implies_the_chart(chart_calls: list[ChartCall]) -> None:
+    run_vector(CRITICAL_VECTOR, output=Path("out.svg"))
+
+    assert chart_calls == [(CRITICAL, Path("out.svg"))]
