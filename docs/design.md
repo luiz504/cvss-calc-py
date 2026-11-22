@@ -56,7 +56,17 @@ write_chart(metrics, path=None) -> Path  # builds the text first, then writes it
 | `core.py` | scoring rules, validation, severity, vector build |
 | `chart.py` | band colors, SVG text, writing the file |
 | `cli.py` | prompts, loops until each answer is valid, printing; `finish_run` (result, then chart if requested) and `save_chart` (writes the chart, reports the path or the `OSError`) |
-| `main.py` | entry point: `argparse` flags, early check of the `-o` path, hands off to the interactive or one-shot mode |
+| `app.py` | the command line: `argparse` flags, early check of the `-o` path, `run()` (the console-script entry point), hands off to the interactive or one-shot mode |
+| `main.py` (project root) | 4-line shim so `python main.py` still works from the source folder |
+
+## Packaging
+
+- `pyproject.toml` uses setuptools. `cvss = "cvss.app:run"` under `[project.scripts]` makes the installer create the `cvss` command.
+- `man/cvss.1` is a hand-written man page, shipped as `share/man/man1/cvss.1` (`[tool.setuptools.data-files]`). The installer links it into `~/.local/share/man`, so `man cvss` works after the install.
+- **Build**: `./build.sh` (or `make build`) runs `pip wheel`, then writes `dist/cvss-<version>-installer.sh`: the shell installer in `packaging/installer.sh` with the wheel appended after a marker line and its SHA-256 written into the header. Only the build needs the network (pip fetches `setuptools`). `dist/` and `build/` are git-ignored.
+- **Install**: `sh dist/cvss-<version>-installer.sh` needs only Python 3.12+ with `venv`, no network, no source folder, no make, no sudo. It verifies the checksum, creates a private venv in `~/.local/share/cvss`, installs the wheel with `pip --no-index --no-deps`, and links `cvss` into `~/.local/bin` and the man page into `~/.local/share/man`. `--uninstall` removes it. It refuses to overwrite a `cvss` it did not install. The program has no runtime dependencies.
+- The checksum detects a damaged or truncated copy, not a malicious one: the file is not signed.
+- A test checks that the entry point is callable and that the man page mentions every long option the parser has, so the two cannot drift apart silently.
 
 ## Exit codes
 
@@ -78,5 +88,7 @@ write_chart(metrics, path=None) -> Path  # builds the text first, then writes it
 8. `build_svg`: title, bars, heights, colors, labels, negative impact as 0
 9. `write_chart`: given path, temp folder by default, write errors
 10. wiring: `save_chart` and `finish_run`, flags passed from `main`, end-to-end tests
+11. the command line moves into the package (`cvss/app.py`), `main.py` becomes a shim
+12. installable: `pyproject.toml` console script `cvss`, then the man page
 
 The test list for each step comes from the domain sections, see `tests/cvss/test_core.py`, and the chart and CLI tests next to it.

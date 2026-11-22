@@ -1,0 +1,86 @@
+.TH CVSS 1 "November 2026" "pyt-cvss 1.0.0" "User Commands"
+.SH NAME
+cvss \- CVSS v3.1 base score calculator
+.SH SYNOPSIS
+.B cvss
+.RB [ \-c ]
+.RB [ \-o
+.IR FILE ]
+.br
+.B cvss
+.BR \-v | \-\-vector
+.I VECTOR
+.RB [ \-c ]
+.RB [ \-o
+.IR FILE ]
+.br
+.B cvss
+.BR \-h | \-\-help
+.SH DESCRIPTION
+.B cvss
+calculates the CVSS v3.1 base score, the severity and the vector string from the eight base metrics.
+Without options it asks the metrics one by one and repeats a question until the answer is valid.
+With
+.B \-\-vector
+it scores a vector string and exits.
+It can also draw the result as an SVG chart.
+.SH OPTIONS
+.TP
+.BR \-v ", " \-\-vector " \fIVECTOR\fR"
+Score the given vector and exit, without asking any question. Example:
+.br
+.I CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H
+.TP
+.BR \-c ", " \-\-chart
+Also write the SVG chart to the system temporary folder and print its path.
+.TP
+.BR \-o ", " \-\-output " \fIFILE\fR"
+Write the SVG chart to
+.IR FILE .
+It must be a file, not a folder; an existing file is overwritten. Implies
+.BR \-\-chart .
+The path is checked before anything runs.
+.TP
+.BR \-h ", " \-\-help
+Show the usage and exit.
+.SH CHART
+Three bars, Base, Impact and Exploitability, on a scale from 0 to 10.
+Each bar is colored by severity band: green (0 to 3.9), blue (4 to 6.9), orange (7 to 8.9) and red (9 to 10).
+The value is written above the bar and the vector at the bottom.
+A negative raw impact (scope changed, no confidentiality, integrity or availability impact) is shown as 0.
+.SH EXIT STATUS
+.TP
+.B 0
+Done.
+.TP
+.B 1
+The vector is invalid, or the chart could not be written. The score is still printed first.
+.TP
+.B 2
+Usage error, or an unusable
+.B \-\-output
+path (missing folder, a directory, no permission).
+.SH FILES
+.TP
+.I <temporary folder>/cvss-calc/cvss-score.svg
+Default chart file (for example
+.I /tmp/cvss-calc/cvss-score.svg
+on Linux). The next run overwrites it.
+.SH EXAMPLES
+Ask the metrics interactively:
+.PP
+.RS
+.nf
+cvss
+.fi
+.RE
+.PP
+Score a vector and save the chart to a chosen file:
+.PP
+.RS
+.nf
+cvss \-v CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H \-o score.svg
+.fi
+.RE
+.SH SEE ALSO
+CVSS v3.1 specification: https://www.first.org/cvss/v3.1/specification-document

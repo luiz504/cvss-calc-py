@@ -1,12 +1,15 @@
 import os
+import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
 import pytest
 
-import main as entry
+from cvss import app as entry
 
 CRITICAL_VECTOR = "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H"
+PROJECT = Path(__file__).resolve().parents[2]
 NEEDS_NON_ROOT = pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file permissions")
 
 
@@ -255,3 +258,22 @@ def test_main_without_chart_flags_writes_no_file(tmp_path: Path, monkeypatch: py
     entry.main(["-v", CRITICAL_VECTOR])
 
     assert not (tmp_path / "cvss-calc").exists()
+
+
+# --- the entry points ---
+
+
+def test_run_reads_the_command_line_from_sys_argv(calls: list[str], monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(sys, "argv", ["cvss", "-v", "CVSS:3.1/AV:N"])
+
+    assert entry.run() == 0
+    assert calls == ["CVSS:3.1/AV:N"]
+
+
+def test_main_py_still_runs_from_the_project_folder() -> None:
+    result = subprocess.run(
+        [sys.executable, "main.py", "-v", CRITICAL_VECTOR], cwd=PROJECT, capture_output=True, text=True, check=False
+    )
+
+    assert result.returncode == 0
+    assert "Score: 9.8" in result.stdout
