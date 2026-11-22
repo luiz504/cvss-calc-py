@@ -5,7 +5,6 @@ from pathlib import Path
 
 from cvss.cli import run_interactive, run_vector
 
-USAGE = "Usage: python main.py cli [--vector CVSS:3.1/AV:N/...]"
 PROGRAM = "cvss"
 DESCRIPTION = "Calculate CVSS v3.1 base scores. Without options it asks the metrics interactively."
 
