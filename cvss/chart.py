@@ -60,6 +60,10 @@ def build_svg(metrics: dict[str, str]) -> str:
 
     score = calculate_base_score(metrics)
     exploitability, impact = calculate_subscores(metrics)
+
+    if impact < 0:
+        impact = 0.0
+
     values = [("Base", score), ("Impact", impact), ("Exploitability", exploitability)]
     lines = []
     lines.append(

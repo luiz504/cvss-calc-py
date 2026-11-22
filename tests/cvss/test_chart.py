@@ -109,3 +109,14 @@ def test_build_svg_labels_bars_with_one_decimal() -> None:
     values = find_all(build_svg(CRITICAL), "value")
 
     assert [value.text for value in values] == ["9.8", "5.9", "3.9"]
+
+
+def test_build_svg_shows_a_negative_impact_as_zero() -> None:
+    no_impact = parse_vector("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:N")  # base 0.0, raw impact below 0
+    svg = build_svg(no_impact)
+
+    values = find_all(svg, "value")
+    bars = find_all(svg, "bar")
+
+    assert [value.text for value in values] == ["0.0", "0.0", "3.9"]
+    assert [number(bar, "height") for bar in bars] == [0, 0, 78]
