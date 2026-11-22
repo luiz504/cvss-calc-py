@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 import main as entry
@@ -57,4 +59,10 @@ def test_main_help_exits_with_usage(capsys: pytest.CaptureFixture[str]) -> None:
 @pytest.mark.parametrize("flag", ["-c", "--chart"])
 def test_main_accepts_the_chart_flag(calls: list[str], flag: str) -> None:
     assert entry.main([flag]) == 0
+    assert calls == ["run_interactive"]
+
+
+@pytest.mark.parametrize("flag", ["-o", "--output"])
+def test_main_accepts_an_output_path(calls: list[str], tmp_path: Path, flag: str) -> None:
+    assert entry.main([flag, str(tmp_path / "score.svg")]) == 0
     assert calls == ["run_interactive"]
