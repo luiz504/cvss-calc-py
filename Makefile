@@ -1,7 +1,7 @@
 VENV := .venv
 PY   := $(VENV)/bin/python
 
-.PHONY: help install run-cli test watch lint lint-fix format format-check check clean
+.PHONY: help install run-cli test watch lint lint-fix format format-check check build clean
 .DEFAULT_GOAL := help
 
 help: ## list commands
@@ -27,7 +27,7 @@ format-check: install ## ruff format check (read-only)
 	$(VENV)/bin/ruff format --check .
 
 clean: ## delete venv and caches
-	rm -rf $(VENV) .ruff_cache .pytest_cache
+	rm -rf $(VENV) .ruff_cache .pytest_cache build dist *.egg-info
 	find . -name __pycache__ -type d -prune -exec rm -rf {} +
 
 test: install ## run tests once
@@ -40,3 +40,6 @@ watch: install ## re-run tests on save
 	$(VENV)/bin/ptw --now --clear --patterns '**/*.py' --ignore-patterns '**/.venv/**' $(CURDIR)
 
 check: lint format-check test ## pre-commit gate: lint + format check + tests
+
+build: ## build the one-file installer in dist/ (same as ./build.sh)
+	./build.sh
