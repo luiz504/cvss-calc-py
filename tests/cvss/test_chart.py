@@ -27,6 +27,17 @@ def test_color_for_score_follows_the_severity_bands(score: float, color: str) ->
     assert color_for_score(score) == color
 
 
+def find_all(svg: str, css_class: str) -> list[ET.Element]:
+    root = ET.fromstring(svg)
+    found = []
+
+    for element in root.iter():
+        if element.get("class") == css_class:
+            found.append(element)
+
+    return found
+
+
 def test_build_svg_rejects_invalid_metrics() -> None:
     with pytest.raises(CvssError):
         build_svg({})
@@ -36,3 +47,9 @@ def test_build_svg_returns_an_svg_document() -> None:
     root = ET.fromstring(build_svg(CRITICAL))
 
     assert root.tag == SVG_NS + "svg"
+
+
+def test_build_svg_has_the_title() -> None:
+    titles = find_all(build_svg(CRITICAL), "title")
+
+    assert [title.text for title in titles] == ["BaseScores"]

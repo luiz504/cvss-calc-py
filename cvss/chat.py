@@ -11,6 +11,9 @@ class ChartColors:
     high: str = "#e67e22"
     critical: str = "#c0392b"
 
+    text: str = "#333333"
+    background: str = "#ffffff"
+
 
 COLORS = ChartColors()
 
@@ -50,6 +53,10 @@ def build_svg(metrics: dict[str, str]) -> str:
     lines.append(
         '<svg xmlns="http://www.w3.org/2000/svg" '
         f'width="{CHART.width}" height="{CHART.height}" font-family="sans-serif">'
+    )
+    lines.append(
+        f'<text class="title" x="{CHART.title_x}" y="{CHART.title_y}" font-size="{CHART.title_size}" '
+        f'font-weight="bold" fill="{COLORS.text}" text-anchor="middle">BaseScores</text>'
     )
     lines.append("</svg>")
 
