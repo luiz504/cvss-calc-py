@@ -151,6 +151,14 @@ def test_cli_chart_flag_saves_to_the_default(
     assert "Chart saved: /fake/default.svg" in capsys.readouterr().out
 
 
+def test_cli_output_implies_the_chart(monkeypatch: pytest.MonkeyPatch, chart_calls: list[ChartCall]) -> None:
+    fake_input(monkeypatch, VALID_ANSWERS)
+
+    run_interactive(output=Path("out.svg"))
+
+    assert chart_calls == [(CRITICAL, Path("out.svg"))]
+
+
 # --- run-vector ---
 def test_cli_vector_prints_the_error_for_an_invalid_vector(capsys: pytest.CaptureFixture[str]) -> None:
     exit_code = run_vector("nope")
