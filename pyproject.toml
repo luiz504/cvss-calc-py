@@ -27,3 +27,6 @@ select = ["E", "F", "I", "B", "UP", "ANN"]
 addopts = "-v -s"
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.setuptools.data-files]
+"share/man/man1" = ["man/cvss.1"]
