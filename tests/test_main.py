@@ -108,3 +108,15 @@ def test_main_rejects_output_that_is_a_directory(
 
     assert "is a directory" in message
     assert calls == []
+
+
+def test_main_rejects_output_inside_a_file(
+    calls: list[str], tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    blocker = tmp_path / "file.txt"
+    blocker.write_text("x")
+
+    message = fail_with(["-o", str(blocker / "score.svg")], capsys)
+
+    assert "not a directory" in message
+    assert calls == []
