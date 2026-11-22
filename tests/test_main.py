@@ -197,3 +197,11 @@ def test_main_passes_the_chart_flag_to_the_interactive_mode(mode_args: list[tupl
     entry.main(["-c"])
 
     assert mode_args == [("interactive", True, None)]
+
+
+def test_main_passes_the_output_path_to_the_interactive_mode(
+    mode_args: list[tuple[str, bool, Path | None]], tmp_path: Path
+) -> None:
+    entry.main(["-o", str(tmp_path / "score.svg")])
+
+    assert mode_args == [("interactive", False, tmp_path / "score.svg")]
