@@ -52,3 +52,9 @@ def test_main_help_exits_with_usage(capsys: pytest.CaptureFixture[str]) -> None:
 
     assert stop.value.code == 0
     assert "usage: cvss" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("flag", ["-c", "--chart"])
+def test_main_accepts_the_chart_flag(calls: list[str], flag: str) -> None:
+    assert entry.main([flag]) == 0
+    assert calls == ["run_interactive"]

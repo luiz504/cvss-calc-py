@@ -11,6 +11,8 @@ DESCRIPTION = "Calculate CVSS v3.1 base scores. Without options it asks the metr
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog=PROGRAM, description=DESCRIPTION, allow_abbrev=False)
     parser.add_argument("-v", "--vector", metavar="VECTOR", help="score this CVSS:3.1 vector and exit")
+    parser.add_argument("-c", "--chart", action="store_true", help="also write the SVG chart to the temp folder")
+
     return parser
 
 
