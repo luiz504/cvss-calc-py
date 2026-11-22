@@ -56,10 +56,14 @@ def main(argv: list[str]) -> int:
         if problem is not None:
             parser.error(problem)
 
+    output = None
+    if args.output is not None:
+        output = Path(args.output)
+
     if args.vector is not None:
         return run_vector(args.vector)
 
-    return run_interactive()
+    return run_interactive(chart=args.chart, output=output)
 
 
 if __name__ == "__main__":

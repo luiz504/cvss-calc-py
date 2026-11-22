@@ -168,3 +168,32 @@ def test_main_rejects_overwriting_a_read_only_file(
 
     assert "permission denied" in message
     assert calls == []
+
+
+@pytest.fixture
+def mode_args(monkeypatch: pytest.MonkeyPatch) -> list[tuple[str, bool, Path | None]]:
+    recorded: list[tuple[str, bool, Path | None]] = []
+
+    def fake_interactive(chart: bool = False, output: Path | None = None) -> int:
+        recorded.append(("interactive", chart, output))
+        return 0
+
+    def fake_vector(vector: str, chart: bool = False, output: Path | None = None) -> int:
+        recorded.append((vector, chart, output))
+        return 0
+
+    monkeypatch.setattr(entry, "run_interactive", fake_interactive)
+    monkeypatch.setattr(entry, "run_vector", fake_vector)
+    return recorded
+
+
+def test_main_passes_no_chart_by_default(mode_args: list[tuple[str, bool, Path | None]]) -> None:
+    entry.main([])
+
+    assert mode_args == [("interactive", False, None)]
+
+
+def test_main_passes_the_chart_flag_to_the_interactive_mode(mode_args: list[tuple[str, bool, Path | None]]) -> None:
+    entry.main(["-c"])
+
+    assert mode_args == [("interactive", True, None)]
