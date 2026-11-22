@@ -96,3 +96,10 @@ def test_build_svg_colors_bars_by_score_band() -> None:
     bars = find_all(build_svg(CRITICAL), "bar")
 
     assert [bar.get("fill") for bar in bars] == [COLORS.critical, COLORS.medium, COLORS.low]
+
+
+def test_build_svg_colors_a_high_score_orange() -> None:
+    high = parse_vector("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L")  # base 7.3, impact 3.4, exploitability 3.9
+    bars = find_all(build_svg(high), "bar")
+
+    assert [bar.get("fill") for bar in bars] == [COLORS.high, COLORS.low, COLORS.low]
