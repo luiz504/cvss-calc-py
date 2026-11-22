@@ -211,3 +211,11 @@ def test_main_passes_the_chart_flag_to_the_one_shot_mode(mode_args: list[tuple[s
     entry.main(["-v", "CVSS:3.1/AV:N", "-c"])
 
     assert mode_args == [("CVSS:3.1/AV:N", True, None)]
+
+
+def test_main_passes_the_output_path_to_the_one_shot_mode(
+    mode_args: list[tuple[str, bool, Path | None]], tmp_path: Path
+) -> None:
+    entry.main(["-v", "CVSS:3.1/AV:N", "-o", str(tmp_path / "score.svg")])
+
+    assert mode_args == [("CVSS:3.1/AV:N", False, tmp_path / "score.svg")]
