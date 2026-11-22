@@ -11,8 +11,8 @@ NEEDS_NON_ROOT = pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file
 @pytest.fixture
 def calls(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     called: list[str] = []
-    monkeypatch.setattr(entry, "run_interactive", lambda: called.append("run_interactive"))
-    monkeypatch.setattr(entry, "run_vector", lambda vector: called.append(vector) or 0)
+    monkeypatch.setattr(entry, "run_interactive", lambda **_options: called.append("run_interactive") or 0)
+    monkeypatch.setattr(entry, "run_vector", lambda vector, **_options: called.append(vector) or 0)
     return called
 
 
@@ -28,9 +28,15 @@ def test_main_vector_flag_runs_the_one_shot_mode(calls: list[str], flag: str) ->
 
 
 def test_main_returns_the_one_shot_exit_code(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(entry, "run_vector", lambda vector: 1)
+    monkeypatch.setattr(entry, "run_vector", lambda vector, **_options: 1)
 
     assert entry.main(["-v", "bad"]) == 1
+
+
+def test_main_returns_the_interactive_exit_code(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(entry, "run_interactive", lambda **_options: 1)
+
+    assert entry.main([]) == 1
 
 
 @pytest.mark.parametrize("argv", [["-v"], ["--vector"]])

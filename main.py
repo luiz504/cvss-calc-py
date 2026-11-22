@@ -59,8 +59,7 @@ def main(argv: list[str]) -> int:
     if args.vector is not None:
         return run_vector(args.vector)
 
-    run_interactive()
-    return 0
+    return run_interactive()
 
 
 if __name__ == "__main__":
