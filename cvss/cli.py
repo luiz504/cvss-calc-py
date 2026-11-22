@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 from cvss.base_metrics import BASE_METRICS
@@ -16,7 +17,11 @@ def print_result(metrics: dict[str, str]) -> None:
 
 
 def save_chart(metrics: dict[str, str], output: Path | None) -> int:
-    path = write_chart(metrics, output)
+    try:
+        path = write_chart(metrics, output)
+    except OSError as error:
+        print(f"cvss: error: cannot write the chart: {error}", file=sys.stderr)
+        return 1
 
     print(f"Chart saved: {path}")
     return 0

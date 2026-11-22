@@ -187,3 +187,15 @@ def test_save_chart_passes_the_metrics_and_output_on(chart_calls: list[ChartCall
     save_chart(CRITICAL, Path("out.svg"))
 
     assert chart_calls == [(CRITICAL, Path("out.svg"))]
+
+
+@pytest.mark.usefixtures("failing_chart")
+def test_save_chart_reports_a_write_error(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = save_chart(CRITICAL, Path("out.svg"))
+
+    captured = capsys.readouterr()
+
+    assert exit_code == 1
+    assert "cannot write the chart" in captured.err
+    assert "denied" in captured.err
+    assert "Chart saved" not in captured.out
