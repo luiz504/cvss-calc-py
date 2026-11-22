@@ -140,3 +140,12 @@ def test_write_chart_overwrites_an_existing_file(tmp_path: Path) -> None:
     write_chart(CRITICAL, target)
 
     assert target.read_text(encoding="utf-8") == build_svg(CRITICAL)
+
+
+def test_write_chart_writes_nothing_for_invalid_metrics(tmp_path: Path) -> None:
+    target = tmp_path / "score.svg"
+
+    with pytest.raises(CvssError):
+        write_chart({}, target)
+
+    assert not target.exists()
