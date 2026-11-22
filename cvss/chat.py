@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from cvss.core import build_vector, validate_metrics
+from cvss.core import build_vector, calculate_base_score, calculate_subscores, validate_metrics
 from cvss.formula import FORMULA
 
 
@@ -28,6 +28,12 @@ class ChartConstants:
     vector_x: int = 200
     vector_y: int = 296
     vector_size: int = 11
+    baseline_y: int = 250
+    first_bar_x: int = 50
+    bar_width: int = 80
+    bar_gap: int = 30
+    name_size: int = 13
+    name_offset_y: int = 22
 
 
 CHART = ChartConstants()
@@ -49,6 +55,9 @@ def color_for_score(score: float) -> str:
 def build_svg(metrics: dict[str, str]) -> str:
     validate_metrics(metrics)
 
+    score = calculate_base_score(metrics)
+    exploitability, impact = calculate_subscores(metrics)
+    values = [("Base", score), ("Impact", impact), ("Exploitability", exploitability)]
     lines = []
     lines.append(
         '<svg xmlns="http://www.w3.org/2000/svg" '
@@ -59,6 +68,15 @@ def build_svg(metrics: dict[str, str]) -> str:
         f'<text class="title" x="{CHART.title_x}" y="{CHART.title_y}" font-size="{CHART.title_size}" '
         f'font-weight="bold" fill="{COLORS.text}" text-anchor="middle">BaseScores</text>'
     )
+    index = 0
+
+    for name, _value in values:
+        x = CHART.first_bar_x + index * (CHART.bar_width + CHART.bar_gap)
+        center = x + CHART.bar_width // 2
+        height = 25
+
+        lines.append(f'<rect class="bar" x="{x}" y="{CHART.baseline_y}" width="{CHART.bar_width}" height="{height}"/>')
+
     lines.append(
         f'<text class="vector" x="{CHART.vector_x}" y="{CHART.vector_y}" font-size="{CHART.vector_size}" '
         f'fill="{COLORS.text}" text-anchor="middle">{build_vector(metrics)}</text>'

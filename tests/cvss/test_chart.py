@@ -59,3 +59,7 @@ def test_build_svg_shows_the_vector() -> None:
     vectors = find_all(build_svg(CRITICAL), "vector")
 
     assert [vector.text for vector in vectors] == [build_vector(CRITICAL)]
+
+
+def test_build_svg_draws_one_bar_per_base_value() -> None:
+    assert len(find_all(build_svg(CRITICAL), "bar")) == 3
