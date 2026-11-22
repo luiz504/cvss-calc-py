@@ -3,7 +3,8 @@
 #
 #   ./build.sh
 #
-# Needs python3 with pip and the network once (pip downloads the build tool, setuptools). Nothing else, no make.
+# Needs python3 with the venv module (Debian/Ubuntu: sudo apt install python3 python3-venv) and the network once
+# (pip, which the venv brings, downloads the build tool, setuptools). No system pip, no make.
 # The result needs only Python 3.12+ with venv to install, and no network.
 
 set -eu
@@ -28,7 +29,9 @@ command -v "$PYTHON" >/dev/null 2>&1 || fail "$PYTHON not found."
 
 rm -rf build dist ./*.egg-info
 mkdir -p build/wheel dist
-"$PYTHON" -m pip wheel . --no-deps --quiet --wheel-dir build/wheel || fail "pip could not build the wheel (is the network up?)."
+# Build inside a throwaway virtual environment: a bare system has no pip, and this never touches the system Python.
+"$PYTHON" -m venv build/venv || fail "could not create a virtual environment (Debian/Ubuntu: sudo apt install python3-venv)."
+build/venv/bin/pip wheel . --no-deps --quiet --wheel-dir build/wheel || fail "pip could not build the wheel (is the network up? pip downloads setuptools)."
 
 set -- build/wheel/*.whl
 [ "$#" -eq 1 ] || fail "expected exactly one wheel in build/wheel."

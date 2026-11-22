@@ -76,3 +76,27 @@ def test_the_unbuilt_template_refuses_to_install(tmp_path: Path) -> None:
     assert result.returncode == 1
     assert "installer template" in result.stderr
     assert not (tmp_path / ".local" / "share" / "cvss").exists()
+
+
+def run_build(tmp_path: Path, python: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        ["sh", str(BUILD_SCRIPT)], capture_output=True, text=True, env={**os.environ, "PYTHON": python}, check=False
+    )
+
+
+def test_build_stops_when_python_is_missing(tmp_path: Path) -> None:
+    result = run_build(tmp_path, str(tmp_path / "no-such-python"))
+
+    assert result.returncode == 1
+    assert "not found" in result.stderr
+
+
+def test_build_explains_a_missing_venv_module(tmp_path: Path) -> None:
+    broken_python = tmp_path / "broken-python"
+    broken_python.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+    broken_python.chmod(0o755)
+
+    result = run_build(tmp_path, str(broken_python))
+
+    assert result.returncode == 1
+    assert "python3-venv" in result.stderr

@@ -19,7 +19,7 @@ sh dist/cvss-1.1.0-installer.sh --uninstall # remove everything it installed
 Copy the installer file anywhere (a VM, a USB stick) and run it there. It checks its own checksum, creates a private virtual environment in `~/.local/share/cvss`, installs the program into it, and links the command into `~/.local/bin` and the man page into `~/.local/share/man`. If `cvss` is not found afterwards, add `~/.local/bin` to your `PATH`; the installer tells you when that is needed.
 
 - **To install:** Python 3.12 or newer with the `venv` module (Debian/Ubuntu: `sudo apt install python3 python3-venv`). Nothing is downloaded.
-- **To build:** `python3` with `pip`, and network access once (pip fetches the build tool, `setuptools`). `make build` does the same as `./build.sh`.
+- **To build:** `python3` with the `venv` module (Debian/Ubuntu: `sudo apt install python3 python3-venv`) and network access once: the build runs in a throwaway virtual environment whose pip fetches the build tool, `setuptools`. A bare system without `python3-pip` is fine. `make build` does the same as `./build.sh`.
 - The program itself has no runtime dependencies (standard library only).
 
 ## Usage
