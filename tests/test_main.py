@@ -44,3 +44,11 @@ def test_main_rejects_unknown_arguments(calls: list[str], argv: list[str]) -> No
 
     assert stop.value.code == 2
     assert calls == []
+
+
+def test_main_help_exits_with_usage(capsys: pytest.CaptureFixture[str]) -> None:
+    with pytest.raises(SystemExit) as stop:
+        entry.main(["-h"])
+
+    assert stop.value.code == 0
+    assert "usage: cvss" in capsys.readouterr().out
