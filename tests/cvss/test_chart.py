@@ -90,3 +90,9 @@ def test_build_svg_sits_every_bar_on_the_baseline() -> None:
 
     for bar in bars:
         assert number(bar, "y") + number(bar, "height") == CHART.baseline_y
+
+
+def test_build_svg_colors_bars_by_score_band() -> None:
+    bars = find_all(build_svg(CRITICAL), "bar")
+
+    assert [bar.get("fill") for bar in bars] == [COLORS.critical, COLORS.medium, COLORS.low]
