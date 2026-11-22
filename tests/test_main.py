@@ -99,3 +99,12 @@ def test_main_rejects_output_in_a_missing_folder(
 
     assert "does not exist" in message
     assert calls == []
+
+
+def test_main_rejects_output_that_is_a_directory(
+    calls: list[str], tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    message = fail_with(["-o", str(tmp_path)], capsys)
+
+    assert "is a directory" in message
+    assert calls == []

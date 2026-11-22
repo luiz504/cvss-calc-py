@@ -22,6 +22,9 @@ def find_output_problem(output: str) -> str | None:
     path = Path(output)
     folder = path.parent
 
+    if path.is_dir():
+        return f"{output} is a directory"
+
     if not folder.exists():
         return f"directory {folder} does not exist"
 
