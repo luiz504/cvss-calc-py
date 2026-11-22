@@ -61,7 +61,7 @@ def main(argv: list[str]) -> int:
         output = Path(args.output)
 
     if args.vector is not None:
-        return run_vector(args.vector)
+        return run_vector(args.vector, chart=args.chart, output=output)
 
     return run_interactive(chart=args.chart, output=output)
 
