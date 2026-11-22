@@ -10,7 +10,7 @@ NEEDS_NON_ROOT = pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file
 
 @pytest.fixture
 def calls(monkeypatch: pytest.MonkeyPatch) -> list[str]:
-    called = []
+    called: list[str] = []
     monkeypatch.setattr(entry, "run_interactive", lambda: called.append("run_interactive"))
     monkeypatch.setattr(entry, "run_vector", lambda vector: called.append(vector) or 0)
     return called

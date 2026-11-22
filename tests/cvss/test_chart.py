@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
-from cvss.chat import COLORS, build_svg, color_for_score
+from cvss.chart import COLORS, build_svg, color_for_score
 from cvss.core import CvssError, build_vector, parse_vector
 
 SVG_NS = "{http://www.w3.org/2000/svg}"
@@ -69,3 +69,17 @@ def test_build_svg_names_the_bars() -> None:
     names = find_all(build_svg(CRITICAL), "name")
 
     assert [name.text for name in names] == ["Base", "Impact", "Exploitability"]
+
+
+def number(element: ET.Element, attribute: str) -> int:
+    value = element.get(attribute)
+    assert value is not None
+
+    return int(value)
+
+
+def test_build_svg_scales_bar_height_by_value() -> None:
+    bars = find_all(build_svg(CRITICAL), "bar")
+
+    # 9.8, 5.9 and 3.9 out of 10, on a 200 px plot
+    assert [number(bar, "height") for bar in bars] == [196, 118, 78]

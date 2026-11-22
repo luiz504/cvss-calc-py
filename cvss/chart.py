@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from cvss.core import build_vector, calculate_base_score, calculate_subscores, validate_metrics
-from cvss.formula import FORMULA
+from .core import build_vector, calculate_base_score, calculate_subscores, validate_metrics
+from .formula import FORMULA
 
 
 @dataclass(frozen=True)
@@ -34,6 +34,7 @@ class ChartConstants:
     bar_gap: int = 30
     name_size: int = 13
     name_offset_y: int = 22
+    plot_height: int = 200
 
 
 CHART = ChartConstants()
@@ -70,10 +71,11 @@ def build_svg(metrics: dict[str, str]) -> str:
     )
     index = 0
 
-    for name, _value in values:
+    for name, value in values:
         x = CHART.first_bar_x + index * (CHART.bar_width + CHART.bar_gap)
         center = x + CHART.bar_width // 2
-        height = 25
+        shown = round(value, 1)
+        height = round(shown / FORMULA.max_score * CHART.plot_height)
 
         lines.append(f'<rect class="bar" x="{x}" y="{CHART.baseline_y}" width="{CHART.bar_width}" height="{height}"/>')
         lines.append(
