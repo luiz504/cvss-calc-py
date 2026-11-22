@@ -35,3 +35,12 @@ def test_main_rejects_flag_without_value(calls: list[str], argv: list[str]) -> N
 
     assert stop.value.code == 2
     assert calls == []
+
+
+@pytest.mark.parametrize("argv", [["cli"], ["--nope"], ["extra"], ["--vec", "CVSS:3.1/AV:N"]])
+def test_main_rejects_unknown_arguments(calls: list[str], argv: list[str]) -> None:
+    with pytest.raises(SystemExit) as stop:
+        entry.main(argv)
+
+    assert stop.value.code == 2
+    assert calls == []
