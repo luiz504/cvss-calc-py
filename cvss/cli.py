@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from cvss.base_metrics import BASE_METRICS
+from cvss.chart import write_chart
 from cvss.core import CvssError, build_vector, calculate_base_score, parse_vector, rate_severity
 
 
@@ -10,6 +13,13 @@ def print_result(metrics: dict[str, str]) -> None:
     print(f"Score: {score}")
     print(f"Severity: {severity}")
     print(f"Vector: {vector}")
+
+
+def save_chart(metrics: dict[str, str], output: Path | None) -> int:
+    path = write_chart(metrics, output)
+
+    print(f"Chart saved: {path}")
+    return 0
 
 
 def run_interactive() -> int:
