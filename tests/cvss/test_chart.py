@@ -10,6 +10,8 @@ from cvss.chat import COLORS, color_for_score
         (3.9, COLORS.low),
         (4.0, COLORS.medium),
         (6.9, COLORS.medium),
+        (7.0, COLORS.high),
+        (8.9, COLORS.high),
     ],
 )
 def test_color_for_score_follows_the_severity_bands(score: float, color: str) -> None:

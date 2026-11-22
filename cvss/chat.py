@@ -15,6 +15,9 @@ COLORS = ChartColors()
 
 
 def color_for_score(score: float) -> str:
+    if score >= FORMULA.high_min:
+        return COLORS.high
+
     if score >= FORMULA.medium_min:
         return COLORS.medium
 
