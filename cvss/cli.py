@@ -12,7 +12,7 @@ def print_result(metrics: dict[str, str]) -> None:
     print(f"Vector: {vector}")
 
 
-def run() -> None:
+def run_interactive() -> None:
     metrics = {}
     total_steps = len(BASE_METRICS)
     step = 0

@@ -1,13 +1,13 @@
 import sys
 
-from cvss.cli import run, run_vector
+from cvss.cli import run_interactive, run_vector
 
 USAGE = "Usage: python main.py cli [--vector CVSS:3.1/AV:N/...]"
 
 
 def main(argv: list[str]) -> int:
     if len(argv) == 2 and argv[1] == "cli":
-        run()
+        run_interactive()
         return 0
 
     if len(argv) == 4 and argv[1] == "cli" and argv[2] == "--vector":

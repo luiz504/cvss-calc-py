@@ -6,7 +6,7 @@ import main as entry
 @pytest.fixture
 def calls(monkeypatch: pytest.MonkeyPatch) -> list[str]:
     called = []
-    monkeypatch.setattr(entry, "run", lambda: called.append("run"))
+    monkeypatch.setattr(entry, "run_vector", lambda: called.append("run_vector"))
     monkeypatch.setattr(entry, "run_vector", lambda vector: called.append(vector) or 0)
     return called
 
@@ -32,7 +32,7 @@ def test_main_rejects_extra_arguments(calls: list[str]) -> None:
 
 def test_main_cli_runs_the_interactive_mode(calls: list[str]) -> None:
     assert entry.main(["main.py", "cli"]) == 0
-    assert calls == ["run"]
+    assert calls == ["run_interactive"]
 
 
 def test_main_rejects_vector_flag_without_value(calls: list[str]) -> None:

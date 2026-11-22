@@ -1,6 +1,6 @@
 import pytest
 
-from cvss.cli import run, run_vector
+from cvss.cli import run_interactive, run_vector
 
 VALID_ANSWERS = ["N", "L", "N", "N", "U", "H", "H", "H"]  # AV AC PR UI S C I A -> 9.8 Critical
 
@@ -23,7 +23,7 @@ def test_cli_asks_again_until_the_answer_is_valid(
 ) -> None:
     prompts = fake_input(monkeypatch, ["X", "Z", *VALID_ANSWERS])
 
-    run()
+    run_interactive()
 
     output = capsys.readouterr().out
 
@@ -53,7 +53,7 @@ def test_cli_asks_again_until_the_answer_is_valid(
 def test_cli_prints_score(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     fake_input(monkeypatch, VALID_ANSWERS)
 
-    run()
+    run_interactive()
 
     assert "Score: 9.8" in capsys.readouterr().out
 
@@ -61,7 +61,7 @@ def test_cli_prints_score(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Captur
 def test_cli_prints_severity(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     fake_input(monkeypatch, VALID_ANSWERS)
 
-    run()
+    run_interactive()
 
     assert "Severity: Critical" in capsys.readouterr().out
 
@@ -69,7 +69,7 @@ def test_cli_prints_severity(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Cap
 def test_cli_prints_vector(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     fake_input(monkeypatch, VALID_ANSWERS)
 
-    run()
+    run_interactive()
 
     assert "Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H" in capsys.readouterr().out
 
@@ -77,7 +77,7 @@ def test_cli_prints_vector(monkeypatch: pytest.MonkeyPatch, capsys: pytest.Captu
 def test_cli_prompt_lists_the_options(monkeypatch: pytest.MonkeyPatch) -> None:
     prompts = fake_input(monkeypatch, VALID_ANSWERS)
 
-    run()
+    run_interactive()
 
     assert prompts[0] == "[1/8 EXPLOITABILITY] AV ATTACK_VECTOR (N=NETWORK A=ADJACENT L=LOCAL P=PHYSICAL): "
 
@@ -85,7 +85,7 @@ def test_cli_prompt_lists_the_options(monkeypatch: pytest.MonkeyPatch) -> None:
 def test_cli_accepts_lowercase_and_spaces(monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
     fake_input(monkeypatch, [" n", "l ", "n", "n", "u", "h", "h", " h "])
 
-    run()
+    run_interactive()
 
     assert "Score: 9.8" in capsys.readouterr().out
 
@@ -93,7 +93,7 @@ def test_cli_accepts_lowercase_and_spaces(monkeypatch: pytest.MonkeyPatch, capsy
 def test_cli_prompts_show_step_and_group_in_order(monkeypatch: pytest.MonkeyPatch) -> None:
     prompts = fake_input(monkeypatch, VALID_ANSWERS)
 
-    run()
+    run_interactive()
 
     asked = []
     for prompt in prompts:
@@ -101,7 +101,7 @@ def test_cli_prompts_show_step_and_group_in_order(monkeypatch: pytest.MonkeyPatc
 
     prompts = fake_input(monkeypatch, VALID_ANSWERS)
 
-    run()
+    run_interactive()
 
     expected_starts = [
         "[1/8 EXPLOITABILITY] AV ",
