@@ -27,7 +27,16 @@ def save_chart(metrics: dict[str, str], output: Path | None) -> int:
     return 0
 
 
-def run_interactive() -> int:
+def finish_run(metrics: dict[str, str], chart: bool, output: Path | None) -> int:
+    print_result(metrics)
+
+    if chart or output is not None:
+        return save_chart(metrics, output)
+
+    return 0
+
+
+def run_interactive(chart: bool = False, output: Path | None = None) -> int:
     metrics = {}
     total_steps = len(BASE_METRICS)
     step = 0
@@ -53,18 +62,7 @@ def run_interactive() -> int:
 
         metrics[metric] = answer
 
-    print_result(metrics)
-
-    return 0
-
-
-def finish_run(metrics: dict[str, str], chart: bool, output: Path | None) -> int:
-    print_result(metrics)
-
-    if chart or output is not None:
-        return save_chart(metrics, output)
-
-    return 0
+    return finish_run(metrics, chart, output)
 
 
 def run_vector(vector: str, chart: bool = False, output: Path | None = None) -> int:
