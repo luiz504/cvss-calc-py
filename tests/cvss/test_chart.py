@@ -1,3 +1,4 @@
+import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -26,6 +27,9 @@ CRITICAL = parse_vector("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H")
 )
 def test_color_for_score_follows_the_severity_bands(score: float, color: str) -> None:
     assert color_for_score(score) == color
+
+
+# --- build_svg ---
 
 
 def find_all(svg: str, css_class: str) -> list[ET.Element]:
@@ -123,7 +127,7 @@ def test_build_svg_shows_a_negative_impact_as_zero() -> None:
     assert [number(bar, "height") for bar in bars] == [0, 0, 78]
 
 
-# --- write cart ---
+# --- write chart ---
 def test_write_chart_writes_the_svg_to_the_given_path(tmp_path: Path) -> None:
     target = tmp_path / "score.svg"
 
@@ -149,3 +153,16 @@ def test_write_chart_writes_nothing_for_invalid_metrics(tmp_path: Path) -> None:
         write_chart({}, target)
 
     assert not target.exists()
+
+
+@pytest.fixture
+def temp_folder(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    monkeypatch.setattr(tempfile, "gettempdir", lambda: str(tmp_path))
+    return tmp_path
+
+
+def test_write_chart_defaults_to_the_temp_folder(temp_folder: Path) -> None:
+    result = write_chart(CRITICAL)
+
+    assert result == temp_folder / "cvss-calc" / "cvss-score.svg"
+    assert result.read_text(encoding="utf-8") == build_svg(CRITICAL)

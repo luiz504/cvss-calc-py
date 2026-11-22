@@ -1,3 +1,4 @@
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -38,6 +39,9 @@ class ChartConstants:
     plot_height: int = 200
     value_size: int = 13
     value_offset_y: int = 8
+
+    folder_name: str = "cvss-calc"
+    file_name: str = "cvss-score.svg"
 
 
 CHART = ChartConstants()
@@ -106,8 +110,17 @@ def build_svg(metrics: dict[str, str]) -> str:
     return "\n".join(lines)
 
 
-def write_chart(metrics: dict[str, str], path: Path) -> Path:
+def default_chart_path() -> Path:
+    return Path(tempfile.gettempdir()) / CHART.folder_name / CHART.file_name
+
+
+def write_chart(metrics: dict[str, str], path: Path | None = None) -> Path:
     svg = build_svg(metrics)
+
+    if path is None:
+        path = default_chart_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+
     path.write_text(svg, encoding="utf-8")
 
     return path
