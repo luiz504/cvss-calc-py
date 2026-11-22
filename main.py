@@ -1,21 +1,29 @@
+import argparse
 import sys
 
 from cvss.cli import run_interactive, run_vector
 
 USAGE = "Usage: python main.py cli [--vector CVSS:3.1/AV:N/...]"
+PROGRAM = "cvss"
+DESCRIPTION = "Calculate CVSS v3.1 base scores. Without options it asks the metrics interactively."
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog=PROGRAM, description=DESCRIPTION, allow_abbrev=False)
+    parser.add_argument("-v", "--vector", metavar="VECTOR", help="score this CVSS:3.1 vector and exit")
+    return parser
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) == 2 and argv[1] == "cli":
-        run_interactive()
-        return 0
+    parser = build_parser()
 
-    if len(argv) == 4 and argv[1] == "cli" and argv[2] == "--vector":
-        return run_vector(argv[3])
+    args = parser.parse_args(argv)
+    if args.vector is not None:
+        return run_vector(args.vector)
 
-    print(USAGE)
-    return 2
+    run_interactive()
+    return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    sys.exit(main(sys.argv[1:]))
