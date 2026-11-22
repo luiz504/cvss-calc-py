@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 import pytest
 
 from cvss.chat import COLORS, build_svg, color_for_score
-from cvss.core import CvssError, parse_vector
+from cvss.core import CvssError, build_vector, parse_vector
 
 SVG_NS = "{http://www.w3.org/2000/svg}"
 
@@ -53,3 +53,9 @@ def test_build_svg_has_the_title() -> None:
     titles = find_all(build_svg(CRITICAL), "title")
 
     assert [title.text for title in titles] == ["BaseScores"]
+
+
+def test_build_svg_shows_the_vector() -> None:
+    vectors = find_all(build_svg(CRITICAL), "vector")
+
+    assert [vector.text for vector in vectors] == [build_vector(CRITICAL)]

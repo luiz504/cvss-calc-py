@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from cvss.core import validate_metrics
+from cvss.core import build_vector, validate_metrics
 from cvss.formula import FORMULA
 
 
@@ -54,9 +54,14 @@ def build_svg(metrics: dict[str, str]) -> str:
         '<svg xmlns="http://www.w3.org/2000/svg" '
         f'width="{CHART.width}" height="{CHART.height}" font-family="sans-serif">'
     )
+    lines.append(f'<rect width="{CHART.width}" height="{CHART.height}" fill="{COLORS.background}"/>')
     lines.append(
         f'<text class="title" x="{CHART.title_x}" y="{CHART.title_y}" font-size="{CHART.title_size}" '
         f'font-weight="bold" fill="{COLORS.text}" text-anchor="middle">BaseScores</text>'
+    )
+    lines.append(
+        f'<text class="vector" x="{CHART.vector_x}" y="{CHART.vector_y}" font-size="{CHART.vector_size}" '
+        f'fill="{COLORS.text}" text-anchor="middle">{build_vector(metrics)}</text>'
     )
     lines.append("</svg>")
 
