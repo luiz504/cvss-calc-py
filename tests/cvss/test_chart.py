@@ -63,3 +63,9 @@ def test_build_svg_shows_the_vector() -> None:
 
 def test_build_svg_draws_one_bar_per_base_value() -> None:
     assert len(find_all(build_svg(CRITICAL), "bar")) == 3
+
+
+def test_build_svg_names_the_bars() -> None:
+    names = find_all(build_svg(CRITICAL), "name")
+
+    assert [name.text for name in names] == ["Base", "Impact", "Exploitability"]

@@ -76,6 +76,11 @@ def build_svg(metrics: dict[str, str]) -> str:
         height = 25
 
         lines.append(f'<rect class="bar" x="{x}" y="{CHART.baseline_y}" width="{CHART.bar_width}" height="{height}"/>')
+        lines.append(
+            f'<text class="name" x="{center}" y="{CHART.baseline_y + CHART.name_offset_y}" '
+            f'font-size="{CHART.name_size}" fill="{COLORS.text}" text-anchor="middle">{name}</text>'
+        )
+        index = index + 1
 
     lines.append(
         f'<text class="vector" x="{CHART.vector_x}" y="{CHART.vector_y}" font-size="{CHART.vector_size}" '
