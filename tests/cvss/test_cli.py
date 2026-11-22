@@ -151,6 +151,18 @@ def test_cli_chart_flag_saves_to_the_default(
     assert "Chart saved: /fake/default.svg" in capsys.readouterr().out
 
 
+@pytest.mark.usefixtures("failing_chart")
+def test_cli_prints_the_result_even_if_the_chart_fails(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    fake_input(monkeypatch, VALID_ANSWERS)
+
+    exit_code = run_interactive(chart=True)
+
+    assert exit_code == 1
+    assert "Score: 9.8" in capsys.readouterr().out
+
+
 def test_cli_output_implies_the_chart(monkeypatch: pytest.MonkeyPatch, chart_calls: list[ChartCall]) -> None:
     fake_input(monkeypatch, VALID_ANSWERS)
 
