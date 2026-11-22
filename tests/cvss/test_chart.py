@@ -1,3 +1,4 @@
+import os
 import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -7,6 +8,7 @@ import pytest
 from cvss.chart import CHART, COLORS, build_svg, color_for_score, write_chart
 from cvss.core import CvssError, build_vector, parse_vector
 
+NEEDS_NON_ROOT = pytest.mark.skipif(os.geteuid() == 0, reason="root ignores file permissions")
 SVG_NS = "{http://www.w3.org/2000/svg}"
 
 CRITICAL = parse_vector("CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H")
@@ -175,3 +177,21 @@ def test_write_chart_default_overwrites_the_previous_run(temp_folder: Path) -> N
     result = write_chart(other)
 
     assert result.read_text(encoding="utf-8") == build_svg(other)
+
+
+def test_write_chart_raises_when_the_folder_is_missing(tmp_path: Path) -> None:
+    with pytest.raises(OSError):
+        write_chart(CRITICAL, tmp_path / "nope" / "score.svg")
+
+
+@NEEDS_NON_ROOT
+def test_write_chart_raises_when_the_folder_is_read_only(tmp_path: Path) -> None:
+    folder = tmp_path / "locked"
+    folder.mkdir()
+    folder.chmod(0o500)
+
+    try:
+        with pytest.raises(PermissionError):
+            write_chart(CRITICAL, folder / "score.svg")
+    finally:
+        folder.chmod(0o700)
