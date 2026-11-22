@@ -148,3 +148,17 @@ def test_main_rejects_output_in_a_read_only_folder(
 
     assert "permission denied" in message
     assert calls == []
+
+
+@NEEDS_NON_ROOT
+def test_main_rejects_overwriting_a_read_only_file(
+    calls: list[str], tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    target = tmp_path / "score.svg"
+    target.write_text("old")
+    target.chmod(0o400)
+
+    message = fail_with(["-o", str(target)], capsys)
+
+    assert "permission denied" in message
+    assert calls == []

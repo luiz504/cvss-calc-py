@@ -42,6 +42,9 @@ def find_output_problem(output: str) -> str | None:
     if not os.access(folder, os.W_OK | os.X_OK):
         return f"permission denied: cannot write in {folder}"
 
+    if path.exists() and not os.access(path, os.W_OK):
+        return f"permission denied: cannot overwrite {output}"
+
     return None
 
 
