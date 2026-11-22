@@ -220,3 +220,11 @@ def test_cli_vector_output_implies_the_chart(chart_calls: list[ChartCall]) -> No
     run_vector(CRITICAL_VECTOR, output=Path("out.svg"))
 
     assert chart_calls == [(CRITICAL, Path("out.svg"))]
+
+
+@pytest.mark.usefixtures("failing_chart")
+def test_cli_vector_prints_the_result_even_if_the_chart_fails(capsys: pytest.CaptureFixture[str]) -> None:
+    exit_code = run_vector(CRITICAL_VECTOR, chart=True)
+
+    assert exit_code == 1
+    assert "Score: 9.8" in capsys.readouterr().out
