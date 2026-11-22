@@ -1,8 +1,9 @@
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import pytest
 
-from cvss.chart import CHART, COLORS, build_svg, color_for_score
+from cvss.chart import CHART, COLORS, build_svg, color_for_score, write_chart
 from cvss.core import CvssError, build_vector, parse_vector
 
 SVG_NS = "{http://www.w3.org/2000/svg}"
@@ -120,3 +121,13 @@ def test_build_svg_shows_a_negative_impact_as_zero() -> None:
 
     assert [value.text for value in values] == ["0.0", "0.0", "3.9"]
     assert [number(bar, "height") for bar in bars] == [0, 0, 78]
+
+
+# --- write cart ---
+def test_write_chart_writes_the_svg_to_the_given_path(tmp_path: Path) -> None:
+    target = tmp_path / "score.svg"
+
+    result = write_chart(CRITICAL, target)
+
+    assert result == target
+    assert target.read_text(encoding="utf-8") == build_svg(CRITICAL)

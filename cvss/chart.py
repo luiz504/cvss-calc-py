@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from pathlib import Path
 
 from .core import build_vector, calculate_base_score, calculate_subscores, validate_metrics
 from .formula import FORMULA
@@ -103,3 +104,10 @@ def build_svg(metrics: dict[str, str]) -> str:
     lines.append("</svg>")
 
     return "\n".join(lines)
+
+
+def write_chart(metrics: dict[str, str], path: Path) -> Path:
+    svg = build_svg(metrics)
+    path.write_text(svg, encoding="utf-8")
+
+    return path
