@@ -43,3 +43,10 @@ def test_the_changelog_has_an_entry_for_the_project_version() -> None:
     changelog = (Path(__file__).resolve().parents[1] / "CHANGELOG.md").read_text(encoding="utf-8")
 
     assert f"## [{version}]" in changelog
+
+
+def test_the_man_page_shows_the_project_version() -> None:
+    version = PYPROJECT["project"]["version"]
+    header = MAN_PAGE.read_text(encoding="utf-8").splitlines()[0]
+
+    assert f'"pyt-cvss {version}"' in header
