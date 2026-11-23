@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -134,8 +135,24 @@ def test_an_installer_for_another_cpu_is_rejected(tmp_path: Path) -> None:
     assert "built for riscv64" in result.stderr
 
 
+def run_build(tmp_path: Path, python: str) -> subprocess.CompletedProcess[str]:
+    """Run build-binary.sh in a throwaway copy of the project, so a test can never touch the real build/ or dist/."""
+    project = tmp_path / "project"
+    (project / "dist").mkdir(parents=True)
+    (project / "dist" / "cvss-9.9.9-installer.sh").write_text("an earlier build", encoding="utf-8")
+    shutil.copy(BUILD_SCRIPT, project / "build-binary.sh")
+    shutil.copy(PROJECT / "pyproject.toml", project / "pyproject.toml")
+    return subprocess.run(
+        ["sh", str(project / "build-binary.sh")],
+        capture_output=True,
+        text=True,
+        env={**os.environ, "PYTHON": python},
+        check=False,
+    )
+
+
 def test_build_stops_when_python_is_missing(tmp_path: Path) -> None:
-    result = run_script(BUILD_SCRIPT, tmp_path, PYTHON=str(tmp_path / "no-such-python"))
+    result = run_build(tmp_path, str(tmp_path / "no-such-python"))
 
     assert result.returncode == 1
     assert "not found" in result.stderr
@@ -146,7 +163,17 @@ def test_build_explains_a_missing_venv_module(tmp_path: Path) -> None:
     broken_python.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
     broken_python.chmod(0o755)
 
-    result = run_script(BUILD_SCRIPT, tmp_path, PYTHON=str(broken_python))
+    result = run_build(tmp_path, str(broken_python))
 
     assert result.returncode == 1
     assert "python3-venv" in result.stderr
+
+
+def test_a_failed_build_leaves_the_earlier_installers_in_dist(tmp_path: Path) -> None:
+    broken_python = tmp_path / "broken-python"
+    broken_python.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+    broken_python.chmod(0o755)
+
+    run_build(tmp_path, str(broken_python))
+
+    assert (tmp_path / "project" / "dist" / "cvss-9.9.9-installer.sh").read_text(encoding="utf-8") == "an earlier build"

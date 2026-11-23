@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -79,8 +80,18 @@ def test_the_unbuilt_template_refuses_to_install(tmp_path: Path) -> None:
 
 
 def run_build(tmp_path: Path, python: str) -> subprocess.CompletedProcess[str]:
+    """Run build.sh in a throwaway copy of the project, so a test can never touch the real build/ or dist/."""
+    project = tmp_path / "project"
+    (project / "dist").mkdir(parents=True)
+    (project / "dist" / "cvss-9.9.9-installer.sh").write_text("an earlier build", encoding="utf-8")
+    shutil.copy(BUILD_SCRIPT, project / "build.sh")
+    shutil.copy(PROJECT / "pyproject.toml", project / "pyproject.toml")
     return subprocess.run(
-        ["sh", str(BUILD_SCRIPT)], capture_output=True, text=True, env={**os.environ, "PYTHON": python}, check=False
+        ["sh", str(project / "build.sh")],
+        capture_output=True,
+        text=True,
+        env={**os.environ, "PYTHON": python},
+        check=False,
     )
 
 
@@ -100,3 +111,13 @@ def test_build_explains_a_missing_venv_module(tmp_path: Path) -> None:
 
     assert result.returncode == 1
     assert "python3-venv" in result.stderr
+
+
+def test_a_failed_build_leaves_the_earlier_installers_in_dist(tmp_path: Path) -> None:
+    broken_python = tmp_path / "broken-python"
+    broken_python.write_text("#!/bin/sh\nexit 1\n", encoding="utf-8")
+    broken_python.chmod(0o755)
+
+    run_build(tmp_path, str(broken_python))
+
+    assert (tmp_path / "project" / "dist" / "cvss-9.9.9-installer.sh").read_text(encoding="utf-8") == "an earlier build"

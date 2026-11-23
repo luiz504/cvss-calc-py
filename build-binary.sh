@@ -27,7 +27,9 @@ version=$(sed -n 's/^version = "\(.*\)"$/\1/p' pyproject.toml | head -n 1)
 arch=$(uname -m)
 installer="dist/cvss-$version-linux-$arch-installer.sh"
 
-rm -rf build dist ./*.egg-info
+# Only the scratch folders are cleared. dist/ is never emptied: the two build scripts share it, and each one overwrites
+# only its own installer.
+rm -rf build ./*.egg-info
 mkdir -p build dist
 
 # Build inside a throwaway virtual environment: a bare system has no pip, and this never touches the system Python.

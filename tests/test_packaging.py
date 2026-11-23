@@ -36,3 +36,10 @@ def test_man_page_is_installed_with_the_package() -> None:
     data_files = PYPROJECT["tool"]["setuptools"]["data-files"]
 
     assert data_files["share/man/man1"] == ["man/cvss.1"]
+
+
+def test_the_changelog_has_an_entry_for_the_project_version() -> None:
+    version = PYPROJECT["project"]["version"]
+    changelog = (Path(__file__).resolve().parents[1] / "CHANGELOG.md").read_text(encoding="utf-8")
+
+    assert f"## [{version}]" in changelog

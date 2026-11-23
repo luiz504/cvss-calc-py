@@ -27,7 +27,9 @@ sha256_of() {
 
 command -v "$PYTHON" >/dev/null 2>&1 || fail "$PYTHON not found."
 
-rm -rf build dist ./*.egg-info
+# Only the scratch folders are cleared. dist/ is never emptied: the two build scripts share it, and each one overwrites
+# only its own installer.
+rm -rf build ./*.egg-info
 mkdir -p build/wheel dist
 # Build inside a throwaway virtual environment: a bare system has no pip, and this never touches the system Python.
 "$PYTHON" -m venv build/venv || fail "could not create a virtual environment (Debian/Ubuntu: sudo apt install python3-venv)."
